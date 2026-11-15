@@ -4,13 +4,13 @@ Shared infrastructure every other feature depends on.
 
 ## API Client
 
-- Base URL `https://api.amber.razvansauciuc.dev/api`, with the path appended to it.
+- Base URL `https://api.amber.albertgalan.ro/api`, with the path appended to it.
 - Authenticated requests attach the access token. On an expired token, call `/auth/v1/refresh` once and retry.
 - The desktop builds URLs with a helper (`apiUrl`) and allows the base URL to be replaced at runtime. Mobile should keep the base URL in one config object.
 
 ## Realtime (WebSocket)
 
-- Connect to `wss://api.amber.razvansauciuc.dev/ws` with `token` and `session_id` query parameters. `session_id` is a UUID generated once per install and reused.
+- Connect to `wss://api.amber.albertgalan.ro/ws` with `token` and `session_id` query parameters. `session_id` is a UUID generated once per install and reused.
 - Send a heartbeat to `/ping` so the connection stays alive.
 - Reconnect with backoff. Expose connection state to the UI (connecting, connected, failed, disconnected). The desktop shows a thin progress bar at the top and one error toast when a connection fails.
 - Route incoming events by their `event` name to the feature that owns them (see the feature files).

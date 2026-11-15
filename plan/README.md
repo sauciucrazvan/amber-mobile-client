@@ -22,7 +22,7 @@ Excluded (desktop-only, see [08-desktop-only.md](08-desktop-only.md)): system tr
 - One feature per branch (`feature/<name>`) and one PR per feature. Keep each PR under 1.5k lines.
 - Each feature adds a doc under `docs/` when it is implemented.
 - Conventional commit messages.
-- The API and WebSocket contracts are the same backend the desktop uses (`api.amber.razvansauciuc.dev`). Mobile must not change them.
+- The API and WebSocket contracts are the same backend the desktop uses (`api.amber.albertgalan.ro`). Mobile must not change them.
 
 ## Suggested Order
 
