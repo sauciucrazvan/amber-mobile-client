@@ -177,4 +177,34 @@ void main() {
 
     expect(await client.restoreSession(), isFalse);
   });
+
+  test('signOut clears tokens without reporting an expired session', () async {
+    final client = clientWith(_FakeAdapter((_) => _json({}, 200)));
+    await client.saveTokens(
+      const TokenPair(accessToken: 'access-1', refreshToken: 'refresh-1'),
+    );
+
+    await client.signOut();
+
+    expect(client.accessToken, isNull);
+    expect(storage.values.containsKey('amber.refreshToken'), isFalse);
+    expect(sessionExpired, 0);
+  });
+
+  test('sends the given content type', () async {
+    final adapter = _FakeAdapter((_) => _json({}, 200));
+    final client = clientWith(adapter);
+
+    await client.request(
+      '/auth/v1/login',
+      method: 'POST',
+      data: {'username': 'ana'},
+      contentType: Headers.formUrlEncodedContentType,
+    );
+
+    expect(
+      adapter.requests.single.contentType,
+      Headers.formUrlEncodedContentType,
+    );
+  });
 }
