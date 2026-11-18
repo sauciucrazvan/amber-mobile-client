@@ -20,9 +20,8 @@ Future<void> main() async {
   final preferredTags = PlatformDispatcher.instance.locales.map(
     (locale) => locale.toLanguageTag(),
   );
-  final localizations = await AppLocalizations.load(
-    resolveLocaleCode(preferredTags),
-  );
+  final localeCode = resolveLocaleCode(preferredTags);
+  final localizations = await AppLocalizations.load(localeCode);
 
   final sessionStore = SessionStore(const SecureKeyValueStorage());
   final apiClient = ApiClient(sessionStore: sessionStore);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 
 const supportedLocaleCodes = ['en', 'ro', 'de', 'fr', 'es', 'zh', 'ja', 'it'];
@@ -28,6 +29,8 @@ class AppLocalizations {
   final Map<String, dynamic> _fallback;
 
   static Future<AppLocalizations> load(String localeCode) async {
+    // Date formats for the language (day dividers, "Member since").
+    await initializeDateFormatting(localeCode);
     final fallback = await _loadJson(fallbackLocaleCode);
     final strings = localeCode == fallbackLocaleCode
         ? fallback

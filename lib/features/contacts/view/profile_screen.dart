@@ -1,7 +1,9 @@
+import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/l10n/dates.dart';
+import 'package:amber_mobile_client/core/l10n/relative_time.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
-import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
@@ -11,19 +13,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Opens a contact's profile. [contactsCubit] is passed in because the route
-/// sits outside the home screen's provider.
+/// Opens a contact's profile as a dialog, as on the desktop. [contactsCubit]
+/// is passed in because the dialog sits outside the home screen's provider.
 Future<void> showContactProfile(
   BuildContext context,
   String username,
   ContactsCubit contactsCubit,
 ) {
-  return Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => BlocProvider.value(
-        value: contactsCubit,
-        child: ContactProfileScreen(username: username),
-      ),
+  return showShadDialog<void>(
+    context: context,
+    builder: (_) => BlocProvider.value(
+      value: contactsCubit,
+      child: ContactProfileScreen(username: username),
     ),
   );
 }
@@ -58,22 +59,8 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     }
   }
 
-  Future<bool> _confirm({
-    required String titleKey,
-    required String descriptionKey,
-    required String actionKey,
-    required String username,
-  }) {
-    final l10n = AppLocalizations.of(context);
-    return showConfirmationDialog(
-      context,
-      title: l10n.t(titleKey),
-      description: l10n.t(descriptionKey, params: {'user': username}),
-      confirmText: l10n.t(actionKey),
-      destructive: true,
-    );
-  }
-
+  /// Runs remove or block after the user confirms. On success it returns to
+  /// home, since the contact is gone.
   Future<void> _act(
     ContactUser user, {
     required String titleKey,
@@ -82,11 +69,13 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     required Future<void> Function(ContactsCubit cubit) run,
     required String successKey,
   }) async {
-    final confirmed = await _confirm(
-      titleKey: titleKey,
-      descriptionKey: descriptionKey,
-      actionKey: actionKey,
-      username: user.displayName,
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l10n.t(titleKey),
+      description: l10n.t(descriptionKey, params: {'user': user.displayName}),
+      confirmText: l10n.t(actionKey),
+      destructive: true,
     );
     if (!confirmed || !mounted) return;
 
@@ -95,7 +84,6 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     try {
       await run(cubit);
       if (!mounted) return;
-      // The contact is gone, so a chat opened from their profile closes too.
       Navigator.of(context).popUntil((route) => route.isFirst);
       showContactToast(context, successKey, username: user.displayName);
     } on ApiFailure catch (failure) {
@@ -116,109 +104,184 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = ShadTheme.of(context);
     final profile = _profile;
+    final errorKey = _errorKey;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.t('contacts.profile'))),
-      body: SafeArea(
-        child: profile == null
-            ? Center(
-                child: _errorKey == null
-                    ? const SizedBox(width: 160, child: ShadProgress())
-                    : Text(l10n.t(_errorKey!)),
-              )
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(child: ContactAvatar(user: profile.user, size: 96)),
-                    const SizedBox(height: 16),
-                    Text(
-                      profile.user.displayName,
-                      style: theme.textTheme.h3,
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      '@${profile.user.username}',
-                      style: theme.textTheme.muted,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    ShadCard(
-                      title: Text(l10n.t('profile.bio.title')),
-                      child: Text(
-                        profile.bio?.trim().isNotEmpty == true
-                            ? profile.bio!.trim()
-                            : l10n.t('profile.bio.empty'),
-                        style: theme.textTheme.muted,
+    if (profile == null) {
+      return ShadDialog(
+        child: SizedBox(
+          height: 120,
+          child: Center(
+            child: errorKey == null
+                ? const SizedBox(width: 120, child: ShadProgress())
+                : Text(l10n.t(errorKey)),
+          ),
+        ),
+      );
+    }
+
+    final user = profile.user;
+    return ShadDialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ContactAvatar(user: user, size: 96),
+          const SizedBox(height: 12),
+          Text(
+            user.displayName,
+            style: theme.textTheme.large,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            '@${user.username}',
+            style: theme.textTheme.muted,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          BioBox(bio: profile.bio),
+          const SizedBox(height: 12),
+          DateRows(
+            registeredAt: profile.registeredAt,
+            online: user.online,
+            lastActiveAt: user.lastActiveAt,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShadButton.outline(
+                key: const ValueKey('remove-contact'),
+                size: ShadButtonSize.sm,
+                leading: const Icon(LucideIcons.x, size: 14),
+                onPressed: _busy
+                    ? null
+                    : () => _act(
+                        user,
+                        titleKey: 'contacts.removeConfirm.title',
+                        descriptionKey: 'contacts.removeConfirm.description',
+                        actionKey: 'common.remove',
+                        successKey: 'contacts.removed',
+                        run: (cubit) => cubit.remove(user),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    ShadCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _InfoRow(
-                            label: l10n.t('stats.member_since'),
-                            value: _formatDate(profile.registeredAt),
-                          ),
-                          const SizedBox(height: 8),
-                          _InfoRow(
-                            label: l10n.t('stats.last_active'),
-                            value: profile.user.online
-                                ? l10n.t('common.online')
-                                : _formatDate(profile.user.lastActiveAt),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ShadButton.outline(
-                      onPressed: _busy
-                          ? null
-                          : () => _act(
-                              profile.user,
-                              titleKey: 'contacts.removeConfirm.title',
-                              descriptionKey:
-                                  'contacts.removeConfirm.description',
-                              actionKey: 'common.remove',
-                              successKey: 'contacts.removed',
-                              run: (cubit) => cubit.remove(profile.user),
-                            ),
-                      child: Text(l10n.t('contacts.remove')),
-                    ),
-                    const SizedBox(height: 8),
-                    ShadButton.destructive(
-                      onPressed: _busy
-                          ? null
-                          : () => _act(
-                              profile.user,
-                              titleKey: 'contacts.blockConfirm.title',
-                              descriptionKey:
-                                  'contacts.blockConfirm.description',
-                              actionKey: 'common.block',
-                              successKey: 'contacts.blocked.success',
-                              run: (cubit) => cubit.block(profile.user),
-                            ),
-                      child: Text(l10n.t('contacts.block')),
-                    ),
-                  ],
-                ),
+                child: Text(l10n.t('contacts.remove')),
               ),
+              const SizedBox(width: 8),
+              ShadButton.outline(
+                key: const ValueKey('block-contact'),
+                size: ShadButtonSize.sm,
+                leading: const Icon(LucideIcons.ban, size: 14),
+                onPressed: _busy
+                    ? null
+                    : () => _act(
+                        user,
+                        titleKey: 'contacts.blockConfirm.title',
+                        descriptionKey: 'contacts.blockConfirm.description',
+                        actionKey: 'common.block',
+                        successKey: 'contacts.blocked.success',
+                        run: (cubit) => cubit.block(user),
+                      ),
+                child: Text(l10n.t('contacts.block')),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
+/// The bio in a bordered box, as on the desktop.
+class BioBox extends StatelessWidget {
+  const BioBox({super.key, required this.bio});
 
-  final String label;
-  final String value;
+  final String? bio;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = ShadTheme.of(context);
+    final text = bio?.trim() ?? '';
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.border),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.t('profile.bio.title'),
+            style: theme.textTheme.small.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.mutedForeground,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text.isEmpty ? l10n.t('profile.bio.empty') : text,
+            style: theme.textTheme.small.copyWith(fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Member since" (month and year) and "Last active" (now, or a relative
+/// time), as on the desktop.
+class DateRows extends StatelessWidget {
+  const DateRows({
+    super.key,
+    required this.registeredAt,
+    required this.online,
+    required this.lastActiveAt,
+  });
+
+  final DateTime? registeredAt;
+  final bool online;
+  final DateTime? lastActiveAt;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = ShadTheme.of(context);
+    final lastActive = online
+        ? l10n.t('calls.history.relative.now')
+        : formatRelativeTime(l10n, lastActiveAt);
+    return Column(
+      children: [
+        _DateRow(
+          label: l10n.t('stats.member_since'),
+          value: formatMonthYear(l10n.localeCode, registeredAt),
+          theme: theme,
+        ),
+        const SizedBox(height: 8),
+        _DateRow(
+          label: l10n.t('stats.last_active'),
+          value: lastActive,
+          theme: theme,
+        ),
+      ],
+    );
+  }
+}
+
+class _DateRow extends StatelessWidget {
+  const _DateRow({
+    required this.label,
+    required this.value,
+    required this.theme,
+  });
+
+  final String label;
+  final String value;
+  final ShadThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -227,13 +290,4 @@ class _InfoRow extends StatelessWidget {
       ],
     );
   }
-}
-
-/// `2026-11-18`, or an empty string when the date is unknown.
-String _formatDate(DateTime? date) {
-  if (date == null) return '';
-  final local = date.toLocal();
-  final month = local.month.toString().padLeft(2, '0');
-  final day = local.day.toString().padLeft(2, '0');
-  return '${local.year}-$month-$day';
 }

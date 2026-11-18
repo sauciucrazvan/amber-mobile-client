@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/l10n/dates.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/image_preview.dart';
 import 'package:material_ui/material_ui.dart';
@@ -77,7 +78,8 @@ class LogSeparator extends StatelessWidget {
   }
 }
 
-/// A divider between days in the message list.
+/// The date above each day's first message, in a centred outline badge, as
+/// on the desktop.
 class DaySeparator extends StatelessWidget {
   const DaySeparator({super.key, required this.day});
 
@@ -85,17 +87,11 @@ class DaySeparator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
+    final locale = AppLocalizations.of(context).localeCode;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        children: [
-          const Expanded(child: ShadSeparator.horizontal()),
-          const SizedBox(width: 8),
-          Text(formatDay(day), style: theme.textTheme.muted),
-          const SizedBox(width: 8),
-          const Expanded(child: ShadSeparator.horizontal()),
-        ],
+      child: Center(
+        child: ShadBadge.outline(child: Text(formatLongDate(locale, day))),
       ),
     );
   }
