@@ -57,6 +57,7 @@ class MessageBubble extends StatelessWidget {
     required this.message,
     required this.isMine,
     this.onLongPress,
+    this.onReactionTap,
   });
 
   final ChatMessage message;
@@ -64,6 +65,9 @@ class MessageBubble extends StatelessWidget {
 
   /// Opens the message actions (reply, react, edit, delete).
   final VoidCallback? onLongPress;
+
+  /// Opens the reactions panel for [emoji].
+  final ValueChanged<String>? onReactionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -131,18 +135,23 @@ class MessageBubble extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       for (final reaction in message.reactions)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: foreground.withAlpha(30),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${reaction.emoji} ${reaction.count}',
-                            style: theme.textTheme.small,
+                        GestureDetector(
+                          onTap: onReactionTap == null
+                              ? null
+                              : () => onReactionTap!(reaction.emoji),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: foreground.withAlpha(30),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '${reaction.emoji} ${reaction.count}',
+                              style: theme.textTheme.small,
+                            ),
                           ),
                         ),
                     ],

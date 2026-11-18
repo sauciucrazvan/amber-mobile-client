@@ -43,6 +43,7 @@ dependencies:
   shared_preferences: ^2.5.6
   shadcn_ui: ^0.60.0
   file_picker: ^13.4.0
+  emoji_picker_flutter: ^4.5.4
 
 dev_dependencies:
   flutter_test:

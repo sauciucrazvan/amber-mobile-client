@@ -7,7 +7,9 @@ import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_file_rules.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
+import 'package:amber_mobile_client/features/chat/view/emoji_sheet.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
+import 'package:amber_mobile_client/features/chat/view/reactions_panel.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
@@ -230,6 +232,9 @@ class _ConversationBodyState extends State<_ConversationBody> {
     if (!mounted || action == null) return;
 
     switch (action) {
+      case MessageAction.moreReactions:
+        final emoji = await showEmojiPicker(context);
+        if (emoji != null) await _react(cubit, message, emoji);
       case MessageAction.reply:
         setState(() {
           _replyTo = message;
@@ -244,6 +249,27 @@ class _ConversationBodyState extends State<_ConversationBody> {
       case MessageAction.delete:
         await _confirmDelete(cubit, message);
     }
+  }
+
+  /// Lists who reacted to [message], using the latest copy from the cubit.
+  Future<void> _showReactions(ChatMessage message) {
+    final cubit = context.read<ConversationCubit>();
+    final latest = cubit.state.messages.firstWhere(
+      (m) => m.id == message.id,
+      orElse: () => message,
+    );
+    final l10n = AppLocalizations.of(context);
+    return showReactionsPanel(
+      context,
+      message: latest,
+      myUserId: widget.myUserId,
+      nameOf: (id) {
+        if (id == widget.myUserId) return l10n.t('conversations.you');
+        if (id == widget.contact.id) return widget.contact.displayName;
+        return '#$id';
+      },
+      onToggle: (emoji) => _react(cubit, latest, emoji),
+    );
   }
 
   Future<void> _react(
@@ -384,6 +410,7 @@ class _ConversationBodyState extends State<_ConversationBody> {
                   myUserId: widget.myUserId,
                   controller: _scroll,
                   onAction: _showActions,
+                  onReactionTap: (message, _) => _showReactions(message),
                 ),
               ),
             ),
@@ -413,12 +440,16 @@ class _MessageList extends StatelessWidget {
     required this.myUserId,
     required this.controller,
     required this.onAction,
+    required this.onReactionTap,
   });
 
   final ConversationState state;
   final int myUserId;
   final ScrollController controller;
   final ValueChanged<ChatMessage> onAction;
+
+  /// Opens the reactions panel for a message, given the tapped emoji.
+  final void Function(ChatMessage message, String emoji) onReactionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -452,6 +483,7 @@ class _MessageList extends StatelessWidget {
           message: message,
           isMine: message.isMine(myUserId),
           onLongPress: () => onAction(message),
+          onReactionTap: (emoji) => onReactionTap(message, emoji),
         );
       },
     );
