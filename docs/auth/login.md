@@ -14,7 +14,12 @@ Sources: `lib/features/auth/view/login_screen.dart`, `lib/features/auth/view/wid
 
 `AuthFormLayout` (title, subtitle, form) and `AuthErrorAlert` are reused by the register and recovery screens.
 
-## Not in this step
+## Links
 
-- The "Forgot password?" and "Register" links are added with their screens.
+- "Forgot password?" opens password recovery (`docs/auth/recovery.md`).
+- "Register" opens the register screen (`docs/auth/register.md`).
+- After a successful password reset, login shows `login.recovery.success` as a notice.
+
+## Not included
+
 - The desktop shows a "Welcome back" toast after login. Mobile skips it for now, since the gate switches screens immediately.

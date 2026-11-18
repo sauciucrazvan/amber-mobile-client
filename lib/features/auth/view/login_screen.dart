@@ -7,9 +7,18 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.onRegister});
+  const LoginScreen({
+    super.key,
+    required this.onRegister,
+    required this.onForgotPassword,
+    this.infoKey,
+  });
 
   final VoidCallback onRegister;
+  final VoidCallback onForgotPassword;
+
+  /// Translation key for a notice, such as a successful password reset.
+  final String? infoKey;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -53,12 +62,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final errorKey = _errorKey;
+    final infoKey = widget.infoKey;
 
     return AuthFormLayout(
       title: l10n.t('login.title'),
       subtitle: l10n.t('login.subtitle'),
       children: [
         AuthErrorAlert(message: errorKey == null ? null : l10n.t(errorKey)),
+        if (infoKey != null && errorKey == null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: ShadAlert(description: Text(l10n.t(infoKey))),
+          ),
         ShadInput(
           controller: _username,
           placeholder: Text(l10n.t('login.usernamePlaceholder')),
@@ -77,7 +92,14 @@ class _LoginScreenState extends State<LoginScreen> {
           onSubmitted: (_) => _submit(),
           enabled: !_submitting,
         ),
-        const SizedBox(height: 20),
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: ShadButton.link(
+            onPressed: _submitting ? null : widget.onForgotPassword,
+            child: Text(l10n.t('login.forgotPassword')),
+          ),
+        ),
+        const SizedBox(height: 8),
         ShadButton(
           onPressed: _submitting ? null : _submit,
           child: Text(l10n.t('login.signIn')),
