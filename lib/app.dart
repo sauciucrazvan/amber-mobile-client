@@ -35,6 +35,10 @@ class AmberApp extends StatelessWidget {
               themeMode: appearance.themeMode,
               appBuilder: (context) => MaterialApp(
                 title: 'Amber',
+                // ShadApp.custom provides a Material theme built from the
+                // active shadcn theme. Without it, Material surfaces such as
+                // Scaffold stay light regardless of the theme mode.
+                theme: Theme.of(context),
                 builder: (context, child) => MediaQuery(
                   data: MediaQuery.of(context).copyWith(
                     textScaler: TextScaler.linear(appearance.fontScale),
