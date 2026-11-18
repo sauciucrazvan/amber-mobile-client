@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/app.dart';
+import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/core/session/session_store.dart';
@@ -34,7 +35,11 @@ Future<AuthCubit> pumpAuthApp(
   await tester.runAsync(authCubit.start);
 
   await tester.pumpWidget(
-    AmberApp(localizations: localizations, authCubit: authCubit),
+    AmberApp(
+      localizations: localizations,
+      authCubit: authCubit,
+      services: AppServices(apiClient: client),
+    ),
   );
   await tester.pumpAndSettle();
   return authCubit;

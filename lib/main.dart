@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:amber_mobile_client/app.dart';
+import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/bloc/app_bloc_observer.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_client.dart';
@@ -38,5 +39,16 @@ Future<void> main() async {
     accountEvents: realtime.on('account.updated'),
   )..start();
 
-  runApp(AmberApp(localizations: localizations, authCubit: authCubit));
+  final services = AppServices(
+    apiClient: apiClient,
+    realtimeEvents: realtime.events,
+  );
+
+  runApp(
+    AmberApp(
+      localizations: localizations,
+      authCubit: authCubit,
+      services: services,
+    ),
+  );
 }
