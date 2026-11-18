@@ -1,22 +1,19 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/material_ui.dart' show Brightness;
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Light and dark themes. The seed colour is the brand amber.
+/// Light and dark shadcn themes. The closest built-in palette to the brand
+/// amber is yellow.
 abstract final class AppTheme {
-  static const _seed = Colors.amber;
+  static const _palette = 'yellow';
 
-  static ThemeData light() => ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: _seed,
-      brightness: Brightness.light,
-    ),
-    useMaterial3: true,
-  );
+  static ShadThemeData light() =>
+      ShadThemeData(colorScheme: ShadColorScheme.fromName(_palette));
 
-  static ThemeData dark() => ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: _seed,
+  static ShadThemeData dark() => ShadThemeData(
+    colorScheme: ShadColorScheme.fromName(
+      _palette,
       brightness: Brightness.dark,
     ),
-    useMaterial3: true,
+    brightness: Brightness.dark,
   );
 }
