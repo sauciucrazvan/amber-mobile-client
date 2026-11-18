@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/core/l10n/dates.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
@@ -196,5 +197,13 @@ void main() {
     expect(find.text('Bob'), findsOneWidget);
     expect(find.text('see you tomorrow'), findsOneWidget);
     expect(find.text('agreed'), findsOneWidget);
+  });
+
+  test('day dividers use the long date, like the desktop', () async {
+    final localizations = (await AppLocalizations.load('en'));
+    expect(
+      formatLongDate(localizations.localeCode, DateTime(2026, 11, 18, 12)),
+      'November 18, 2026',
+    );
   });
 }

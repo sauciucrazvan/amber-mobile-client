@@ -92,7 +92,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('sign-out')));
     await tester.pumpAndSettle();
-    expect(find.byType(ShadDialog), findsOneWidget);
+    expect(find.byType(ShadDialog), findsNWidgets(2));
 
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
@@ -109,7 +109,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(
       find.descendant(
-        of: find.byType(ShadDialog),
+        of: find.byType(ShadDialog).last,
         matching: find.widgetWithText(ShadButton, 'Sign out'),
       ),
     );

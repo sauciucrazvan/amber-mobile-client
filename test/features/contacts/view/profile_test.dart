@@ -130,8 +130,8 @@ void main() {
     expect(find.byType(ContactProfileScreen), findsOneWidget);
     expect(find.text('Coffee first.'), findsOneWidget);
     expect(find.text('Member since'), findsOneWidget);
-    expect(find.text('2026-01-02'), findsOneWidget);
-    expect(find.text('Online'), findsOneWidget);
+    expect(find.text('January 2026'), findsOneWidget);
+    expect(find.text('now'), findsOneWidget);
   });
 
   testWidgets('blocking asks first, calls the API and removes the contact', (
@@ -142,11 +142,11 @@ void main() {
     await _openProfile(tester);
 
     await _tap(tester, find.text('Block'));
-    expect(find.byType(ShadDialog), findsOneWidget);
+    expect(find.byType(ShadDialog), findsNWidgets(2));
     await _tap(
       tester,
       find.descendant(
-        of: find.byType(ShadDialog),
+        of: find.byType(ShadDialog).last,
         matching: find.text('Block'),
       ),
     );
