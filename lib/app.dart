@@ -1,22 +1,32 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/core/theme/appearance_cubit.dart';
+import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/auth/view/auth_gate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 /// Root widget. Feature screens are added here as they are built.
 class AmberApp extends StatelessWidget {
-  const AmberApp({super.key, required this.localizations});
+  const AmberApp({
+    super.key,
+    required this.localizations,
+    required this.authCubit,
+  });
 
   final AppLocalizations localizations;
+  final AuthCubit authCubit;
 
   @override
   Widget build(BuildContext context) {
     return AppLocalizationsScope(
       localizations: localizations,
-      child: BlocProvider(
-        create: (_) => AppearanceCubit()..load(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: authCubit),
+          BlocProvider(create: (_) => AppearanceCubit()..load()),
+        ],
         child: BlocBuilder<AppearanceCubit, AppearanceState>(
           builder: (context, appearance) {
             return ShadApp.custom(
@@ -35,9 +45,7 @@ class AmberApp extends StatelessWidget {
                   ),
                   child: child!,
                 ),
-                home: const Scaffold(
-                  body: Center(child: ShadCard(child: Text('Amber'))),
-                ),
+                home: const AuthGate(),
               ),
             );
           },

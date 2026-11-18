@@ -29,8 +29,9 @@ class ApiClient {
   final SessionStore sessionStore;
   final Dio _dio;
 
-  /// Called when the session is cleared after a failed refresh.
-  final void Function()? onSessionExpired;
+  /// Called when the session is cleared after a failed refresh. Assignable
+  /// after construction so the auth layer can be wired in later.
+  void Function()? onSessionExpired;
 
   String? _accessToken;
   Future<bool>? _refreshInFlight;
@@ -41,11 +42,12 @@ class ApiClient {
     String path, {
     String method = 'GET',
     Object? data,
+    String? contentType,
   }) {
     return _dio.request<T>(
       AppConfig.apiUrl(path),
       data: data,
-      options: Options(method: method),
+      options: Options(method: method, contentType: contentType),
     );
   }
 
@@ -65,9 +67,14 @@ class ApiClient {
   }
 
   Future<void> clearSession() async {
+    await signOut();
+    onSessionExpired?.call();
+  }
+
+  /// Forgets the tokens without reporting an expired session.
+  Future<void> signOut() async {
     _accessToken = null;
     await sessionStore.clearRefreshToken();
-    onSessionExpired?.call();
   }
 
   Future<bool> _refresh() async {
