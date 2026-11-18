@@ -3,6 +3,7 @@ import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/signed_out_flow.dart';
 import 'package:amber_mobile_client/features/auth/view/verify_account_screen.dart';
+import 'package:amber_mobile_client/features/home/home_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -14,23 +15,32 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
+      // Screens pushed while signed in (profiles, chats) must not survive
+      // sign-out or an expired session.
+      listenWhen: (previous, current) =>
+          previous.status == AuthStatus.authenticated &&
+          current.status != AuthStatus.authenticated,
+      listener: (context, _) =>
+          Navigator.of(context).popUntil((route) => route.isFirst),
       builder: (context, state) {
         return Scaffold(
           body: SafeArea(
-            child: Center(
-              child: switch (state.status) {
-                AuthStatus.unknown => const SizedBox(
-                  width: 160,
-                  child: ShadProgress(),
-                ),
-                AuthStatus.unreachable => const _Unreachable(),
-                AuthStatus.unauthenticated => const SignedOutFlow(),
-                AuthStatus.authenticated when state.needsVerification =>
-                  const VerifyAccountScreen(),
-                AuthStatus.authenticated => const _SignedIn(),
-              },
-            ),
+            child: switch (state.status) {
+              AuthStatus.authenticated when !state.needsVerification =>
+                const HomeScreen(),
+              _ => Center(
+                child: switch (state.status) {
+                  AuthStatus.unknown => const SizedBox(
+                    width: 160,
+                    child: ShadProgress(),
+                  ),
+                  AuthStatus.unreachable => const _Unreachable(),
+                  AuthStatus.unauthenticated => const SignedOutFlow(),
+                  AuthStatus.authenticated => const VerifyAccountScreen(),
+                },
+              ),
+            },
           ),
         );
       },
@@ -55,25 +65,6 @@ class _Unreachable extends StatelessWidget {
           child: const Text('Retry'),
         ),
       ],
-    );
-  }
-}
-
-/// Placeholder for the main screen.
-class _SignedIn extends StatelessWidget {
-  const _SignedIn();
-
-  @override
-  Widget build(BuildContext context) {
-    final account = context.select((AuthCubit cubit) => cubit.state.account);
-    return ShadCard(
-      title: Text(account?.fullName ?? account?.username ?? 'Amber'),
-      footer: ShadButton.outline(
-        onPressed: () => context.read<AuthCubit>().signOut(),
-        child: Text(
-          AppLocalizations.of(context).t('settings.account.signOut.action'),
-        ),
-      ),
     );
   }
 }
