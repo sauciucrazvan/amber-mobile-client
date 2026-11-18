@@ -31,7 +31,7 @@ class ContactAvatar extends StatelessWidget {
       child: Stack(
         children: [
           ShadAvatar(
-            user.avatarUrl ?? '',
+            user.avatarUrl,
             size: Size.square(size),
             placeholder: Text(_initials),
           ),
