@@ -121,7 +121,7 @@ void main() {
     final calls = <RequestOptions>[];
     await _openChat(tester, calls);
 
-    await _tap(tester, find.text('👍 1'));
+    await _tap(tester, find.byKey(const ValueKey('reactions-m-1')));
 
     expect(find.text('Bob Ionescu'), findsWidgets);
     expect(find.text('Click to react'), findsOneWidget);
@@ -131,7 +131,7 @@ void main() {
     final calls = <RequestOptions>[];
     await _openChat(tester, calls, reactedByMe: true);
 
-    await _tap(tester, find.text('👍 2'));
+    await _tap(tester, find.byKey(const ValueKey('reactions-m-1')));
     await _tap(tester, find.text('Remove your reaction'));
 
     final remove = calls.lastWhere((c) => c.method == 'DELETE');
