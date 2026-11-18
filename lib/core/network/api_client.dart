@@ -35,6 +35,8 @@ class ApiClient {
   String? _accessToken;
   Future<bool>? _refreshInFlight;
 
+  String? get accessToken => _accessToken;
+
   Future<Response<T>> request<T>(
     String path, {
     String method = 'GET',
