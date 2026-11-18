@@ -31,7 +31,11 @@ ChatMessage _fileMessage({
   });
 }
 
-Future<void> _pumpBubble(WidgetTester tester, ChatMessage message) async {
+Future<void> _pumpBubble(
+  WidgetTester tester,
+  ChatMessage message, {
+  bool isMine = false,
+}) async {
   final localizations = (await tester.runAsync(
     () => AppLocalizations.load('en'),
   ))!;
@@ -40,7 +44,14 @@ Future<void> _pumpBubble(WidgetTester tester, ChatMessage message) async {
       localizations: localizations,
       child: ShadApp.custom(
         appBuilder: (_) => MaterialApp(
-          home: Scaffold(body: MessageBubble(message: message, isMine: false)),
+          home: Scaffold(
+            body: MessageBubble(
+              message: message,
+              isMine: isMine,
+              myUserId: 1,
+              nameOf: (id) => 'Bob',
+            ),
+          ),
         ),
       ),
     ),
@@ -92,5 +103,98 @@ void main() {
     );
 
     expect(find.text('see attached'), findsOneWidget);
+  });
+
+  testWidgets('reactions show as emoji only, with +N when there are more', (
+    tester,
+  ) async {
+    final message = ChatMessage.fromJson({
+      'id': 'm-1',
+      'conversation_id': 'c-1',
+      'sender_id': 2,
+      'seq': 1,
+      'type': 'text',
+      'content': {'text': 'hi'},
+      'reaction_details': [
+        {
+          'emoji': '👍',
+          'count': 3,
+          'user_ids': [1, 2, 3],
+        },
+        {
+          'emoji': '😂',
+          'count': 1,
+          'user_ids': [2],
+        },
+      ],
+      'created_at': '2026-11-18T10:00:00+00:00',
+      'edited_at': null,
+      'seen': false,
+    });
+    await _pumpBubble(tester, message);
+
+    expect(find.text('👍'), findsOneWidget);
+    expect(find.text('+1'), findsOneWidget);
+    expect(find.text('👍 3'), findsNothing);
+  });
+
+  testWidgets('a log entry is a centred separator, not a bubble', (
+    tester,
+  ) async {
+    final message = ChatMessage.fromJson({
+      'id': 'm-2',
+      'conversation_id': 'c-1',
+      'sender_id': 2,
+      'seq': 2,
+      'type': 'log',
+      'content': {'event': 'call.missed', 'text': 'Missed'},
+      'reaction_details': [],
+      'created_at': '2026-11-18T10:00:00+00:00',
+      'edited_at': null,
+      'seen': false,
+    });
+    final localizations = (await tester.runAsync(
+      () => AppLocalizations.load('en'),
+    ))!;
+    await tester.pumpWidget(
+      AppLocalizationsScope(
+        localizations: localizations,
+        child: ShadApp.custom(
+          appBuilder: (_) => MaterialApp(
+            home: Scaffold(body: LogSeparator(message: message)),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Missed call'), findsOneWidget);
+  });
+
+  testWidgets('a reply quotes the author and the parent text', (tester) async {
+    final message = ChatMessage.fromJson({
+      'id': 'm-3',
+      'conversation_id': 'c-1',
+      'sender_id': 1,
+      'seq': 3,
+      'type': 'text',
+      'content': {
+        'text': 'agreed',
+        'reply_to': {
+          'id': 'm-1',
+          'sender_id': 2,
+          'type': 'text',
+          'content': {'text': 'see you tomorrow'},
+        },
+      },
+      'reaction_details': [],
+      'created_at': '2026-11-18T10:00:00+00:00',
+      'edited_at': null,
+      'seen': false,
+    });
+    await _pumpBubble(tester, message, isMine: true);
+
+    expect(find.text('Bob'), findsOneWidget);
+    expect(find.text('see you tomorrow'), findsOneWidget);
+    expect(find.text('agreed'), findsOneWidget);
   });
 }

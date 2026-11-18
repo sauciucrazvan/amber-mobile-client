@@ -253,6 +253,15 @@ class _ConversationBodyState extends State<_ConversationBody> {
     }
   }
 
+  /// The display name for a user id in this conversation.
+  String _nameOf(int userId) {
+    if (userId == widget.myUserId) {
+      return AppLocalizations.of(context).t('conversations.you');
+    }
+    if (userId == widget.contact.id) return widget.contact.displayName;
+    return '#$userId';
+  }
+
   /// Lists who reacted to [message], using the latest copy from the cubit.
   Future<void> _showReactions(ChatMessage message) {
     final cubit = context.read<ConversationCubit>();
@@ -389,7 +398,8 @@ class _ConversationBodyState extends State<_ConversationBody> {
                   myUserId: widget.myUserId,
                   controller: _scroll,
                   onAction: _showActions,
-                  onReactionTap: (message, _) => _showReactions(message),
+                  onReactionTap: _showReactions,
+                  nameOf: _nameOf,
                 ),
               ),
             ),
@@ -420,6 +430,7 @@ class _MessageList extends StatelessWidget {
     required this.controller,
     required this.onAction,
     required this.onReactionTap,
+    required this.nameOf,
   });
 
   final ConversationState state;
@@ -428,7 +439,10 @@ class _MessageList extends StatelessWidget {
   final ValueChanged<ChatMessage> onAction;
 
   /// Opens the reactions panel for a message, given the tapped emoji.
-  final void Function(ChatMessage message, String emoji) onReactionTap;
+  final void Function(ChatMessage message) onReactionTap;
+
+  /// Turns a user id into a name, for reply quotes.
+  final String Function(int userId) nameOf;
 
   @override
   Widget build(BuildContext context) {
@@ -457,12 +471,15 @@ class _MessageList extends StatelessWidget {
         final item = items[index];
         if (item is DateTime) return DaySeparator(day: item);
         final message = item as ChatMessage;
+        if (message.type == 'log') return LogSeparator(message: message);
         return MessageBubble(
           key: ValueKey(message.id),
           message: message,
           isMine: message.isMine(myUserId),
+          myUserId: myUserId,
+          nameOf: nameOf,
           onLongPress: () => onAction(message),
-          onReactionTap: (emoji) => onReactionTap(message, emoji),
+          onReactionTap: () => onReactionTap(message),
         );
       },
     );
