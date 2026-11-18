@@ -97,6 +97,16 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthState(status: AuthStatus.authenticated, account: account));
   }
 
+  /// Emails a verification code. Throws [AuthFailure].
+  Future<void> requestVerification() => _api.requestVerification();
+
+  /// Verifies the account with [code], then reloads it. The backend also
+  /// pushes `account.updated`, but the reload does not depend on it.
+  Future<void> verify(String code) async {
+    await _api.verify(code);
+    await refreshAccount();
+  }
+
   Future<void> signOut() async {
     await _disconnectRealtime();
     await _client.signOut();
