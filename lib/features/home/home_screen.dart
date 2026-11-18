@@ -6,7 +6,7 @@ import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.dart';
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
-import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
+import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/requests_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -116,9 +116,9 @@ class _HomeViewState extends State<_HomeView> {
             index: _tab.index,
             children: [
               ContactsList(
-                onOpen: (contact) => showContactProfile(
+                onOpen: (contact) => showConversation(
                   context,
-                  contact.user.username,
+                  contact.user,
                   context.read<ContactsCubit>(),
                 ),
               ),
