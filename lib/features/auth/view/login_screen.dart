@@ -1,6 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/auth_form_layout.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _username.text.trim();
     final password = _password.text;
     if (username.isEmpty || password.isEmpty) {
-      setState(() => _errorKey = AuthFailure.fillInput);
+      setState(() => _errorKey = ApiFailure.fillInput);
       return;
     }
 
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     try {
       await context.read<AuthCubit>().login(username, password);
-    } on AuthFailure catch (failure) {
+    } on ApiFailure catch (failure) {
       if (mounted) setState(() => _errorKey = failure.messageKey);
     } finally {
       if (mounted) setState(() => _submitting = false);

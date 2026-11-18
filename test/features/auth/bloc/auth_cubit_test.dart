@@ -5,7 +5,7 @@ import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/core/session/session_store.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/auth_api.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -124,7 +124,7 @@ void main() {
     );
     await cubit.start();
 
-    await expectLater(cubit.login('ana', 'wrong'), throwsA(isA<AuthFailure>()));
+    await expectLater(cubit.login('ana', 'wrong'), throwsA(isA<ApiFailure>()));
     expect(cubit.state.status, AuthStatus.unauthenticated);
   });
 
@@ -161,7 +161,7 @@ void main() {
     });
     await cubit.login('ana', 'Secret123');
 
-    await expectLater(cubit.refreshAccount(), throwsA(isA<AuthFailure>()));
+    await expectLater(cubit.refreshAccount(), throwsA(isA<ApiFailure>()));
 
     expect(cubit.state.status, AuthStatus.unauthenticated);
     expect(disconnects, 1);

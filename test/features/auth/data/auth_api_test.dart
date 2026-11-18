@@ -1,7 +1,7 @@
 import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/core/session/session_store.dart';
 import 'package:amber_mobile_client/features/auth/data/auth_api.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -50,7 +50,7 @@ void main() {
     await expectLater(
       api.login('ana', 'wrong'),
       throwsA(
-        isA<AuthFailure>().having(
+        isA<ApiFailure>().having(
           (f) => f.messageKey,
           'messageKey',
           'login.incorrectCredentials',
@@ -97,7 +97,7 @@ void main() {
         password: 'Secret123',
       ),
       throwsA(
-        isA<AuthFailure>().having((f) => f.fieldErrors, 'fieldErrors', {
+        isA<ApiFailure>().having((f) => f.fieldErrors, 'fieldErrors', {
           'email': 'register.emailTaken',
         }),
       ),

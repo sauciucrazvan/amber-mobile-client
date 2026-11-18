@@ -1,10 +1,10 @@
 import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:dio/dio.dart';
 
 /// Calls the `/auth/v1/*` and `/account/v1/recovery/*` endpoints.
-/// Every method throws [AuthFailure] on an error response.
+/// Every method throws [ApiFailure] on an error response.
 class AuthApi {
   AuthApi(this._client);
 
@@ -100,7 +100,7 @@ class AuthApi {
     try {
       return await call();
     } on DioException catch (error) {
-      throw AuthFailure.fromDio(error);
+      throw ApiFailure.fromDio(error);
     }
   }
 }

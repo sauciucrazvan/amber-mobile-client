@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
 import 'package:amber_mobile_client/features/auth/data/auth_api.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -58,10 +58,10 @@ class AuthCubit extends Cubit<AuthState> {
       await _loadAccount();
     } on DioException {
       emit(const AuthState(status: AuthStatus.unreachable));
-    } on AuthFailure catch (failure) {
+    } on ApiFailure catch (failure) {
       emit(
         AuthState(
-          status: failure.messageKey == AuthFailure.unreachable
+          status: failure.messageKey == ApiFailure.unreachable
               ? AuthStatus.unreachable
               : AuthStatus.unauthenticated,
         ),
@@ -69,7 +69,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Throws [AuthFailure] so the login screen can show the message.
+  /// Throws [ApiFailure] so the login screen can show the message.
   Future<void> login(String username, String password) async {
     await _api.login(username, password);
     await _loadAccount();
@@ -97,7 +97,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthState(status: AuthStatus.authenticated, account: account));
   }
 
-  /// Emails a verification code. Throws [AuthFailure].
+  /// Emails a verification code. Throws [ApiFailure].
   Future<void> requestVerification() => _api.requestVerification();
 
   /// Verifies the account with [code], then reloads it. The backend also
@@ -107,7 +107,7 @@ class AuthCubit extends Cubit<AuthState> {
     await refreshAccount();
   }
 
-  /// Emails a password recovery code. Throws [AuthFailure].
+  /// Emails a password recovery code. Throws [ApiFailure].
   Future<void> requestRecovery(String username) =>
       _api.requestRecovery(username);
 
