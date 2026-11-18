@@ -26,4 +26,5 @@ final response = await client.request<Map<String, dynamic>>('/users/me');
 
 ## Notes
 
-- The desktop client refreshes on any failed refresh, including offline errors. Mobile keeps the session on network errors on purpose.
+- The desktop client logs out on any failed refresh, including offline errors. Mobile keeps the session on network errors on purpose.
+- `accessToken` is exposed read-only so the realtime client can read the current token.
