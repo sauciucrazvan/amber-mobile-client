@@ -1,10 +1,4 @@
-/// Parses a backend timestamp. A value without a timezone is read as UTC,
-/// since the backend stores UTC.
-DateTime? parseServerTime(Object? value) {
-  if (value is! String || value.isEmpty) return null;
-  final hasZone = RegExp(r'(Z|[+-]\d{2}:?\d{2})$').hasMatch(value);
-  return DateTime.tryParse(hasZone ? value : '${value}Z');
-}
+import 'package:amber_mobile_client/core/network/server_time.dart';
 
 /// The other user in a contact, request or block.
 class ContactUser {
