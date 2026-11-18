@@ -8,9 +8,7 @@ class AuthFailure implements Exception {
   static const tooManyRequests = 'common.errors.too_many_requests';
   static const fillInput = 'login.fillInput';
 
-  /// There is no shared translation key for this yet, so it is plain text.
-  static const unreachable =
-      'Could not reach the server. Check your connection.';
+  static const unreachable = 'common.connection.failed';
 
   final String messageKey;
 
