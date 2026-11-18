@@ -70,6 +70,7 @@ void main() {
       final socketFuture = accepted.stream.first;
 
       final event = client.on('user_connected').first;
+      final anyEvent = client.events.first;
       await client.connect();
       final socket = await socketFuture;
       socket.listen(messages.add);
@@ -83,6 +84,7 @@ void main() {
 
       socket.add(jsonEncode({'event': 'user_connected', 'username': 'ana'}));
       expect((await event)['username'], 'ana');
+      expect((await anyEvent)['event'], 'user_connected');
 
       await client.disconnect();
       expect(client.state, RealtimeConnectionState.disconnected);
