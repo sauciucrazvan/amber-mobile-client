@@ -4,7 +4,7 @@ Sources: `lib/core/theme/app_theme.dart`, `lib/core/theme/appearance_cubit.dart`
 
 ## What it does
 
-- Light and dark `ThemeData`, built from a seed colour (amber). Material 3 is on.
+- Light and dark `ShadThemeData` from `shadcn_ui`, the UI library AGENTS.md requires. `ShadApp.custom` provides them. `MaterialApp` stays underneath only as the navigator root.
 - `AppearanceCubit` holds the theme mode and the font scale. `AmberApp` rebuilds from it, so changes apply right away with no restart.
 - The font scale is applied as a `TextScaler` through `MediaQuery`, so it scales all text in the app.
 - Values are saved per device with `shared_preferences` (keys `amber.theme` and `amber.fontScale`). Unknown stored values fall back to the defaults.
@@ -18,4 +18,4 @@ Sources: `lib/core/theme/app_theme.dart`, `lib/core/theme/appearance_cubit.dart`
 ## Notes
 
 - The Settings screen that changes these values is part of feature 07 (`plan/07-settings.md`). This step provides the state and persistence only.
-- The seed colour `Colors.amber` is a placeholder. Replace it with the brand colour when one is chosen.
+- shadcn has no amber palette. `AppTheme` uses the built-in `yellow` scheme as the closest match. Swap it for a custom `ShadColorScheme` when the brand colour is chosen.
