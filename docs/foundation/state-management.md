@@ -13,4 +13,4 @@ The mobile client uses **Bloc** (`flutter_bloc`) for all state, as chosen for th
 
 ## Notes
 
-- UI components come from the `material_ui` package, which the project already depended on.
+- UI components come from `shadcn_ui`, as AGENTS.md requires. `material_ui` remains only where `MaterialApp` and Material primitives are still needed.
