@@ -401,9 +401,12 @@ class _ConversationBodyState extends State<_ConversationBody> {
                 listenWhen: (previous, current) =>
                     _lastSeq(previous) != _lastSeq(current),
                 listener: (context, _) {
-                  context.read<ConversationCubit>().markRead().catchError(
-                    (_) {},
-                  );
+                  final contacts = context.read<ContactsCubit>();
+                  context
+                      .read<ConversationCubit>()
+                      .markRead()
+                      .then((_) => contacts.clearUnread(contact.id))
+                      .catchError((_) {});
                 },
                 builder: (context, state) => _MessageList(
                   state: state,

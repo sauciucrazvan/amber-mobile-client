@@ -21,8 +21,10 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) {
         final services = context.read<AppServices>();
+        final myUserId = context.read<AuthCubit>().state.account?.id ?? -1;
         return ContactsCubit(
           api: ContactsApi(services.apiClient),
+          myUserId: myUserId,
           events: services.realtimeEvents,
         )..load();
       },

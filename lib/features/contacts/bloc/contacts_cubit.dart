@@ -49,12 +49,16 @@ List<Contact> sortContacts(List<Contact> contacts) {
 class ContactsCubit extends Cubit<ContactsState> {
   ContactsCubit({
     required this._api,
+    required this.myUserId,
     Stream<Map<String, dynamic>> events = const Stream.empty(),
   }) : super(const ContactsState()) {
     _events = events.listen(_onEvent);
   }
 
   final ContactsApi _api;
+
+  /// The current user, so their own messages don't count as unread.
+  final int myUserId;
   late final StreamSubscription<Map<String, dynamic>> _events;
 
   Future<void> load() async {
@@ -100,9 +104,21 @@ class ContactsCubit extends Cubit<ContactsState> {
     _removeRequest(user.id);
   }
 
+  /// Clears the unread count for a contact. The chat screen calls this after
+  /// marking the conversation read.
+  void clearUnread(int userId) {
+    if (isClosed) return;
+    _updateContact(userId, (contact) => contact.copyWith(notifications: 0));
+  }
+
   void _onEvent(Map<String, dynamic> event) {
     if (isClosed) return;
     final name = event['event'];
+
+    if (name == 'message.created') {
+      _countIncoming(event['payload']);
+      return;
+    }
 
     if (event['type'] == 'presence' && event['username'] is String) {
       final online = name == 'user_connected';
@@ -166,6 +182,21 @@ class ContactsCubit extends Cubit<ContactsState> {
               : contact.copyWith(clearLastMessage: true),
         );
     }
+  }
+
+  /// Counts a message from a contact as unread. Messages the current user
+  /// sent are ignored, and so are contacts not in the list.
+  void _countIncoming(Object? payload) {
+    if (payload is! Map<String, dynamic>) return;
+    final message = payload['message'];
+    if (message is! Map<String, dynamic>) return;
+    final senderId = message['sender_id'];
+    if (senderId is! int || senderId == myUserId) return;
+
+    _updateContact(
+      senderId,
+      (contact) => contact.copyWith(notifications: contact.notifications + 1),
+    );
   }
 
   void _upsertContact(Contact contact) {

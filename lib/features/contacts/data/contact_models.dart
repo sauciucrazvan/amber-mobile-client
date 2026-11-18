@@ -116,13 +116,14 @@ class Contact {
     ContactUser? user,
     DateTime? lastActionAt,
     LastMessage? lastMessage,
+    int? notifications,
     bool clearLastMessage = false,
   }) {
     return Contact(
       user: user ?? this.user,
       createdAt: createdAt,
       lastActionAt: lastActionAt ?? this.lastActionAt,
-      notifications: notifications,
+      notifications: notifications ?? this.notifications,
       lastMessage: clearLastMessage ? null : lastMessage ?? this.lastMessage,
     );
   }
