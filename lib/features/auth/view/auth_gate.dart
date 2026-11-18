@@ -1,6 +1,7 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/features/auth/view/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -23,7 +24,7 @@ class AuthGate extends StatelessWidget {
                   child: ShadProgress(),
                 ),
                 AuthStatus.unreachable => const _Unreachable(),
-                AuthStatus.unauthenticated => const _SignedOut(),
+                AuthStatus.unauthenticated => const LoginScreen(),
                 AuthStatus.authenticated => const _SignedIn(),
               },
             ),
@@ -52,16 +53,6 @@ class _Unreachable extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-/// Placeholder until the login screen lands.
-class _SignedOut extends StatelessWidget {
-  const _SignedOut();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(AppLocalizations.of(context).t('login.title'));
   }
 }
 
