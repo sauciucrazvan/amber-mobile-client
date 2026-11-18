@@ -29,8 +29,15 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
       _infoKey = null;
       _submitting = true;
     });
+    final cubit = context.read<AuthCubit>();
     try {
-      await action(context.read<AuthCubit>());
+      try {
+        await action(cubit);
+      } on AuthFailure catch (failure) {
+        // Verified elsewhere: reload so the gate opens the app.
+        if (failure.messageKey != 'register.verify.already_verified') rethrow;
+        await cubit.refreshAccount();
+      }
     } on AuthFailure catch (failure) {
       if (mounted) _onFailure(failure);
     } finally {
@@ -39,18 +46,11 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
   }
 
   void _onFailure(AuthFailure failure) {
-    switch (failure.messageKey) {
+    setState(() {
+      _errorKey = failure.messageKey;
       // A code was already sent in the last 30 minutes: let the user enter it.
-      case 'register.verify.too_soon':
-        setState(() {
-          _codeSent = true;
-          _errorKey = failure.messageKey;
-        });
-      case 'register.verify.already_verified':
-        context.read<AuthCubit>().refreshAccount();
-      default:
-        setState(() => _errorKey = failure.messageKey);
-    }
+      if (failure.messageKey == 'register.verify.too_soon') _codeSent = true;
+    });
   }
 
   Future<void> _send() => _run((cubit) async {

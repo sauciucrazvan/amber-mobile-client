@@ -129,4 +129,37 @@ void main() {
 
     expect(find.text('The code you provided is invalid'), findsOneWidget);
   });
+
+  testWidgets('an account verified elsewhere reloads and opens the app', (
+    tester,
+  ) async {
+    var meCalls = 0;
+    final cubit = await _signInUnverified(tester, (options) {
+      final path = options.path;
+      if (path.endsWith('/auth/v1/login')) {
+        return jsonResponse({
+          'access_token': 'access-1',
+          'refresh_token': 'refresh-1',
+          'token_type': 'bearer',
+        }, 200);
+      }
+      if (path.endsWith('/auth/v1/verify/request')) {
+        return jsonResponse({
+          'detail': 'register.verify.already_verified',
+        }, 400);
+      }
+      meCalls++;
+      return jsonResponse({
+        'id': 1,
+        'username': 'ana',
+        'full_name': 'Ana Pop',
+        'verified': meCalls > 1,
+      }, 200);
+    });
+
+    await _tap(tester, 'Send');
+
+    expect(cubit.state.needsVerification, isFalse);
+    expect(find.text('Ana Pop'), findsOneWidget);
+  });
 }
