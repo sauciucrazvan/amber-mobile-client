@@ -60,21 +60,31 @@ class LastMessage {
   const LastMessage({
     required this.senderId,
     required this.type,
-    this.content,
+    this.content = const {},
     this.createdAt,
   });
 
-  factory LastMessage.fromJson(Map<String, dynamic> json) => LastMessage(
-    senderId: json['sender_id'] as int,
-    type: json['type'] as String? ?? 'text',
-    content: json['content'] as String?,
-    createdAt: parseServerTime(json['created_at']),
-  );
+  factory LastMessage.fromJson(Map<String, dynamic> json) {
+    final content = json['content'];
+    return LastMessage(
+      senderId: json['sender_id'] as int,
+      type: json['type'] as String? ?? 'text',
+      content: content is Map ? Map<String, dynamic>.from(content) : const {},
+      createdAt: parseServerTime(json['created_at']),
+    );
+  }
 
   final int senderId;
+
+  /// `text`, `file` or `log` (system entries such as call logs).
   final String type;
-  final String? content;
+
+  /// The message body as stored by the backend (JSON), for example
+  /// `{"text": "hi"}`, `{"filename": "a.png"}` or `{"event": "call.missed"}`.
+  final Map<String, dynamic> content;
   final DateTime? createdAt;
+
+  String? get text => content['text'] as String?;
 }
 
 /// An entry of `GET /contacts/v1/list`.

@@ -244,12 +244,12 @@ void main() {
           'last_message': {
             'sender_id': 2,
             'type': 'text',
-            'content': 'hello',
+            'content': {'text': 'hello'},
             'created_at': '2026-11-18T00:00:00+00:00',
           },
         }),
       );
-      expect(cubit.state.contacts.single.lastMessage?.content, 'hello');
+      expect(cubit.state.contacts.single.lastMessage?.text, 'hello');
 
       await emitEvent(
         _contactsEvent('contact.last_message.updated', {

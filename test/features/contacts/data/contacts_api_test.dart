@@ -40,7 +40,7 @@ void main() {
           'last_message': {
             'sender_id': 2,
             'type': 'text',
-            'content': 'hey',
+            'content': {'text': 'hey'},
             'created_at': '2026-11-18T10:00:00+00:00',
           },
         },
@@ -53,7 +53,7 @@ void main() {
     expect(contact.user.displayName, 'Bob Ionescu');
     expect(contact.user.online, isTrue);
     expect(contact.notifications, 3);
-    expect(contact.lastMessage?.content, 'hey');
+    expect(contact.lastMessage?.text, 'hey');
     expect(contact.lastActionAt, DateTime.utc(2026, 11, 18, 10));
   });
 
