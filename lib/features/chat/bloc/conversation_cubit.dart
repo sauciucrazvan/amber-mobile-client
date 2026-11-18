@@ -116,12 +116,23 @@ class ConversationCubit extends Cubit<ConversationState> {
     _insert(message);
   }
 
-  /// Replies to [parent] with text.
-  Future<void> reply(ChatMessage parent, String text) async {
+  /// Sends a file, with an optional caption.
+  Future<void> sendFile(ChatUpload file, {String? text}) async {
+    final message = await _api.sendFile(conversationId, file: file, text: text);
+    _insert(message);
+  }
+
+  /// Replies to [parent] with text, a file, or both.
+  Future<void> reply(
+    ChatMessage parent, {
+    String? text,
+    ChatUpload? file,
+  }) async {
     final message = await _api.reply(
       conversationId,
       messageId: parent.id,
       text: text,
+      file: file,
     );
     _insert(message);
   }

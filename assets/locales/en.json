@@ -454,7 +454,11 @@
       "no_relation": "You are not friends with this users or they've blocked you."
     },
     "files": {
-      "attachment": "Attachment"
+      "attachment": "Attachment",
+      "attach": "Attach a file",
+      "type_not_accepted": "This file type can't be sent.",
+      "too_big": "Files can be up to 15 MB.",
+      "empty": "This file is empty."
     }
   },
   "calls": {

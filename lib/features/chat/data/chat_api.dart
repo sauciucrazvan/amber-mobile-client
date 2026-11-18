@@ -204,38 +204,6 @@ class ChatUpload {
   final List<int> bytes;
   final String filename;
 
-  /// Must be one of the types in [ChatFileRules.allowedContentTypes].
+  /// Must be one of the types in [ChatFileRules.contentTypes].
   final String contentType;
-}
-
-/// Upload limits from `app/api/features/chats/files.py`. Checking them on the
-/// device gives the user a clear message before a large upload starts.
-abstract final class ChatFileRules {
-  static const maxBytes = 15 * 1024 * 1024;
-
-  static const allowedContentTypes = {
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/gif',
-    'image/heic',
-    'video/mp4',
-    'video/quicktime',
-    'video/webm',
-    'audio/mpeg',
-    'audio/ogg',
-    'audio/aac',
-    'audio/m4a',
-    'application/pdf',
-    'text/plain',
-    'text/csv',
-    'application/zip',
-    'application/x-zip-compressed',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  };
 }

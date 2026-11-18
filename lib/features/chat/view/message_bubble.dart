@@ -1,5 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
+import 'package:amber_mobile_client/features/chat/view/image_preview.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -74,7 +75,7 @@ class MessageBubble extends StatelessWidget {
     final foreground = isMine
         ? theme.colorScheme.primaryForeground
         : theme.colorScheme.foreground;
-    final body = _body();
+    final body = _body(context, foreground);
 
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
@@ -166,9 +167,21 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _body() {
+  Widget _body(BuildContext context, Color foreground) {
     final file = message.file;
-    if (file != null) return Text(file.filename);
+    if (file != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _FileAttachment(file: file, foreground: foreground),
+          if (message.text case final caption? when caption.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(caption),
+          ],
+        ],
+      );
+    }
     if (message.type == 'log') {
       return Text(
         message.text ?? '',
@@ -177,4 +190,56 @@ class MessageBubble extends StatelessWidget {
     }
     return Text(message.text ?? '');
   }
+}
+
+/// An attachment inside a bubble. Images show a preview that opens full
+/// screen. Other files show their name and size.
+class _FileAttachment extends StatelessWidget {
+  const _FileAttachment({required this.file, required this.foreground});
+
+  final ChatFile file;
+  final Color foreground;
+
+  @override
+  Widget build(BuildContext context) {
+    if (file.isImage) {
+      return GestureDetector(
+        onTap: () =>
+            showImagePreview(context, url: file.url, filename: file.filename),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 240, maxHeight: 320),
+            child: Image.network(
+              file.url,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _fileRow(context),
+            ),
+          ),
+        ),
+      );
+    }
+    return _fileRow(context);
+  }
+
+  Widget _fileRow(BuildContext context) {
+    final theme = ShadTheme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(LucideIcons.file, size: 18, color: foreground),
+        const SizedBox(width: 8),
+        Flexible(child: Text(file.filename, overflow: TextOverflow.ellipsis)),
+        const SizedBox(width: 8),
+        Text(formatFileSize(file.size), style: theme.textTheme.small),
+      ],
+    );
+  }
+}
+
+/// `512 B`, `240 KB` or `3.2 MB`.
+String formatFileSize(int bytes) {
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).round()} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }
