@@ -7,7 +7,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.onRegister});
+
+  final VoidCallback onRegister;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -79,6 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ShadButton(
           onPressed: _submitting ? null : _submit,
           child: Text(l10n.t('login.signIn')),
+        ),
+        const SizedBox(height: 16),
+        AuthSwitchPrompt(
+          prompt: l10n.t('login.registerPrompt'),
+          linkLabel: l10n.t('login.registerLink'),
+          onPressed: _submitting ? null : widget.onRegister,
         ),
       ],
     );
