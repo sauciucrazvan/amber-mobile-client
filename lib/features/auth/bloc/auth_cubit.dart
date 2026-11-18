@@ -107,6 +107,25 @@ class AuthCubit extends Cubit<AuthState> {
     await refreshAccount();
   }
 
+  /// Emails a password recovery code. Throws [AuthFailure].
+  Future<void> requestRecovery(String username) =>
+      _api.requestRecovery(username);
+
+  /// Sets a new password with a recovery code. The user then logs in again.
+  Future<void> resetPassword({
+    required String username,
+    required String code,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) {
+    return _api.resetPassword(
+      username: username,
+      code: code,
+      newPassword: newPassword,
+      newPasswordConfirmation: newPasswordConfirmation,
+    );
+  }
+
   Future<void> signOut() async {
     await _disconnectRealtime();
     await _client.signOut();
