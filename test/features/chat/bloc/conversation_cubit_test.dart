@@ -256,6 +256,40 @@ void main() {
     expect(cubit.state.messages.single.reactions, isEmpty);
   });
 
+  test('sendFile uploads the file and adds the message', () async {
+    final cubit = await cubitWith((options) {
+      if (options.method == 'POST') {
+        return jsonResponse({
+          ..._msg(6, sender: _me),
+          'type': 'file',
+          'content': {
+            'url': 'https://files.example.com/a.pdf',
+            'filename': 'a.pdf',
+            'content_type': 'application/pdf',
+            'size': 3,
+          },
+        }, 200);
+      }
+      return jsonResponse([_msg(4), _msg(5)], 200);
+    });
+    await cubit.load();
+
+    await cubit.sendFile(
+      const ChatUpload(
+        bytes: [1, 2, 3],
+        filename: 'a.pdf',
+        contentType: 'application/pdf',
+      ),
+      text: 'the report',
+    );
+
+    expect(seqs(cubit), [4, 5, 6]);
+    expect(cubit.state.messages.last.file?.filename, 'a.pdf');
+    final form = adapter.requests.last.data as FormData;
+    expect(Map.fromEntries(form.fields), {'text': 'the report'});
+    expect(form.files.single.value.filename, 'a.pdf');
+  });
+
   test('markRead sends the newest loaded seq', () async {
     final cubit = await cubitWith((options) {
       if (options.path.endsWith('/read-cursor')) {

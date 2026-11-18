@@ -4,12 +4,14 @@ import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/chat/bloc/conversation_cubit.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
+import 'package:amber_mobile_client/features/chat/data/chat_file_rules.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -134,6 +136,59 @@ class _ConversationBodyState extends State<_ConversationBody> {
     context.read<ConversationCubit>().loadOlder().catchError((_) {});
   }
 
+  /// Picks one file, checks it against the backend's rules, and sends it with
+  /// any text in the composer as its caption. A reply target is kept.
+  Future<void> _attach() async {
+    final picked = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ChatFileRules.extensions,
+    );
+    if (picked.isEmpty || !mounted) return;
+
+    final file = picked.first;
+    final size = await file.length() ?? 0;
+    final problem = ChatFileRules.problemFor(
+      extension: file.extension,
+      size: size,
+    );
+    if (problem != null) {
+      _showError(problem);
+      return;
+    }
+
+    final upload = ChatUpload(
+      bytes: await file.readAsBytes(),
+      filename: file.name,
+      contentType: ChatFileRules.contentTypeFor(file.extension)!,
+    );
+    await _sendUpload(upload);
+  }
+
+  Future<void> _sendUpload(ChatUpload upload) async {
+    final cubit = context.read<ConversationCubit>();
+    final text = _text.text.trim();
+    final caption = text.isEmpty ? null : text;
+    final replyTo = _replyTo;
+    setState(() => _sending = true);
+    try {
+      if (replyTo != null) {
+        await cubit.reply(replyTo, text: caption, file: upload);
+      } else {
+        await cubit.sendFile(upload, text: caption);
+      }
+      if (mounted) {
+        setState(() {
+          _text.clear();
+          _replyTo = null;
+        });
+      }
+    } on ApiFailure catch (failure) {
+      if (mounted) _showError(failure.messageKey);
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
+  }
+
   Future<void> _send() async {
     final text = _text.text.trim();
     if (text.isEmpty || _sending) return;
@@ -146,7 +201,7 @@ class _ConversationBodyState extends State<_ConversationBody> {
       if (editing != null) {
         await cubit.edit(editing, text);
       } else if (replyTo != null) {
-        await cubit.reply(replyTo, text);
+        await cubit.reply(replyTo, text: text);
       } else {
         await cubit.sendText(text);
       }
@@ -336,6 +391,8 @@ class _ConversationBodyState extends State<_ConversationBody> {
               controller: _text,
               sending: _sending,
               onSend: _send,
+              // Attachments can't be added to an edit, which only changes text.
+              onAttach: _editing == null ? _attach : null,
               banner: _banner(l10n),
             ),
           ],
@@ -420,12 +477,16 @@ class _Composer extends StatelessWidget {
     required this.controller,
     required this.sending,
     required this.onSend,
+    this.onAttach,
     this.banner,
   });
 
   final TextEditingController controller;
   final bool sending;
   final VoidCallback onSend;
+
+  /// Null while the attach button should be disabled.
+  final VoidCallback? onAttach;
 
   /// Shown above the input while replying or editing.
   final Widget? banner;
@@ -450,7 +511,12 @@ class _Composer extends StatelessWidget {
                   onSubmitted: (_) => onSend(),
                 ),
               ),
-              const SizedBox(width: 8),
+              ShadIconButton.ghost(
+                key: const ValueKey('attach-file'),
+                icon: const Icon(LucideIcons.paperclip),
+                onPressed: sending ? null : onAttach,
+              ),
+              const SizedBox(width: 4),
               ShadIconButton(
                 key: const ValueKey('send-message'),
                 icon: const Icon(LucideIcons.send),

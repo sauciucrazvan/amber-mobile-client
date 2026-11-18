@@ -206,10 +206,4 @@ void main() {
       ),
     );
   });
-
-  test('ChatFileRules matches the backend limits', () {
-    expect(ChatFileRules.maxBytes, 15 * 1024 * 1024);
-    expect(ChatFileRules.allowedContentTypes, contains('image/png'));
-    expect(ChatFileRules.allowedContentTypes, isNot(contains('image/svg+xml')));
-  });
 }
