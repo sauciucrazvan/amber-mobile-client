@@ -1,26 +1,14 @@
-import 'package:amber_mobile_client/core/session/key_value_storage.dart';
 import 'package:amber_mobile_client/core/session/session_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _MemoryStorage implements KeyValueStorage {
-  final Map<String, String> values = {};
-
-  @override
-  Future<String?> read(String key) async => values[key];
-
-  @override
-  Future<void> write(String key, String value) async => values[key] = value;
-
-  @override
-  Future<void> delete(String key) async => values.remove(key);
-}
+import '../../support/memory_key_value_storage.dart';
 
 void main() {
-  late _MemoryStorage storage;
+  late MemoryKeyValueStorage storage;
   late SessionStore store;
 
   setUp(() {
-    storage = _MemoryStorage();
+    storage = MemoryKeyValueStorage();
     store = SessionStore(storage);
   });
 
