@@ -4,7 +4,9 @@ import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.dart';
+import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
+import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/requests_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -62,6 +64,15 @@ class _HomeViewState extends State<_HomeView> {
                 ),
               ),
               ShadIconButton.ghost(
+                key: const ValueKey('blocked-accounts'),
+                icon: const Icon(LucideIcons.ban),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const BlockedAccountsScreen(),
+                  ),
+                ),
+              ),
+              ShadIconButton.ghost(
                 key: const ValueKey('add-contact'),
                 icon: const Icon(LucideIcons.userPlus),
                 onPressed: () => showAddContactDialog(context),
@@ -103,7 +114,16 @@ class _HomeViewState extends State<_HomeView> {
         Expanded(
           child: IndexedStack(
             index: _tab.index,
-            children: const [ContactsList(), RequestsList()],
+            children: [
+              ContactsList(
+                onOpen: (contact) => showContactProfile(
+                  context,
+                  contact.user.username,
+                  context.read<ContactsCubit>(),
+                ),
+              ),
+              const RequestsList(),
+            ],
           ),
         ),
       ],
