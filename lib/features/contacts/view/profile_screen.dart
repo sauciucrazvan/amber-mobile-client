@@ -1,5 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
+import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
@@ -62,26 +63,15 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     required String descriptionKey,
     required String actionKey,
     required String username,
-  }) async {
+  }) {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showShadDialog<bool>(
-      context: context,
-      builder: (context) => ShadDialog.alert(
-        title: Text(l10n.t(titleKey)),
-        description: Text(l10n.t(descriptionKey, params: {'user': username})),
-        actions: [
-          ShadButton.outline(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('common.cancel')),
-          ),
-          ShadButton.destructive(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.t(actionKey)),
-          ),
-        ],
-      ),
+    return showConfirmationDialog(
+      context,
+      title: l10n.t(titleKey),
+      description: l10n.t(descriptionKey, params: {'user': username}),
+      confirmText: l10n.t(actionKey),
+      destructive: true,
     );
-    return confirmed ?? false;
   }
 
   Future<void> _act(

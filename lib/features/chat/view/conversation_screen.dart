@@ -1,6 +1,7 @@
 import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
+import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/chat/bloc/conversation_cubit.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
@@ -289,26 +290,14 @@ class _ConversationBodyState extends State<_ConversationBody> {
     ChatMessage message,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showShadDialog<bool>(
-      context: context,
-      builder: (dialogContext) => ShadDialog.alert(
-        title: Text(l10n.t('conversations.deleteMessage.confirm.title')),
-        description: Text(
-          l10n.t('conversations.deleteMessage.confirm.description'),
-        ),
-        actions: [
-          ShadButton.outline(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.t('common.cancel')),
-          ),
-          ShadButton.destructive(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.t('common.delete')),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: l10n.t('conversations.deleteMessage.confirm.title'),
+      description: l10n.t('conversations.deleteMessage.confirm.description'),
+      confirmText: l10n.t('common.delete'),
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
 
     try {
       await cubit.delete(message);

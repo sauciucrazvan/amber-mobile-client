@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:dio/dio.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -144,7 +145,7 @@ void main() {
 
     await tester.longPress(find.text('hello there'));
     await tester.pumpAndSettle();
-    await _tap(tester, find.text('More reactions'));
+    await _tap(tester, find.byKey(const ValueKey('more-reactions')));
 
     expect(find.byType(EmojiPicker), findsOneWidget);
   });

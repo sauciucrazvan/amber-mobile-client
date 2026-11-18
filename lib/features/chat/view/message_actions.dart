@@ -5,8 +5,8 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 enum MessageAction { reply, moreReactions, edit, delete }
 
-/// Quick reactions, in the desktop's order: like, love, laugh, smile.
-const quickReactions = ['👍', '❤️', '😂', '😊'];
+/// Quick reactions, in the desktop's order: like, love, smile, laugh.
+const quickReactions = ['👍', '❤️', '😊', '😂'];
 
 /// Actions for a long-pressed message: quick reactions, then reply, and for
 /// the current user's own messages, edit and delete.
@@ -38,16 +38,22 @@ Future<MessageAction?> showMessageActions(
                       Navigator.of(sheetContext).pop();
                       onReact(emoji);
                     },
-                    child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                    child: Text(emoji, style: const TextStyle(fontSize: 22)),
                   ),
+                // Opens the full picker, like the chevron on the desktop.
+                Tooltip(
+                  message: l10n.t('conversations.reactions.more'),
+                  child: ShadIconButton.ghost(
+                    key: const ValueKey('more-reactions'),
+                    icon: const Icon(LucideIcons.chevronRight),
+                    onPressed: () =>
+                        Navigator.of(sheetContext)
+                            .pop(MessageAction.moreReactions),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            ShadButton.ghost(
-              onPressed: () =>
-                  Navigator.of(sheetContext).pop(MessageAction.moreReactions),
-              child: Text(l10n.t('conversations.reactions.more')),
-            ),
             ShadButton.ghost(
               onPressed: () =>
                   Navigator.of(sheetContext).pop(MessageAction.reply),

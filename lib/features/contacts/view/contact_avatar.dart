@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -44,7 +45,7 @@ class ContactAvatar extends StatelessWidget {
                 width: dotSize,
                 height: dotSize,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF22C55E),
+                  color: AppColors.online,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: theme.colorScheme.background,
