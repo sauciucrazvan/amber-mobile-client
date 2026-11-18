@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The app talks to the Amber API and WebSocket in every build type. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="amber_mobile_client"
         android:name="${applicationName}"
