@@ -73,19 +73,22 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     final l10n = AppLocalizations.of(context);
+    // Matches the desktop: own messages use a light tint of the primary
+    // colour, others use the muted colour at 80% with primary text.
+    final dark = theme.brightness == Brightness.dark;
     final background = isMine
-        ? theme.colorScheme.primary
-        : theme.colorScheme.muted;
+        ? (dark ? const Color(0xFF2E2E2E) : const Color(0xFFE8E8E8))
+        : theme.colorScheme.muted.withAlpha(204);
     final foreground = isMine
-        ? theme.colorScheme.primaryForeground
-        : theme.colorScheme.foreground;
+        ? theme.colorScheme.foreground
+        : theme.colorScheme.primary;
     final body = _body(context, foreground);
 
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.sizeOf(context).width * 0.75,
+          maxWidth: MediaQuery.sizeOf(context).width * 0.8,
         ),
         child: GestureDetector(
           onLongPress: onLongPress,
@@ -94,7 +97,7 @@ class MessageBubble extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: background,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,

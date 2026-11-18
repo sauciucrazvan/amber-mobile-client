@@ -1,5 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/auth/view/sign_out.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/auth_form_layout.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/code_input.dart';
@@ -113,9 +114,7 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
           ),
         const SizedBox(height: 16),
         ShadButton.link(
-          onPressed: _submitting
-              ? null
-              : () => context.read<AuthCubit>().signOut(),
+          onPressed: _submitting ? null : () => confirmAndSignOut(context),
           child: Text(l10n.t('settings.account.signOut.action')),
         ),
       ],

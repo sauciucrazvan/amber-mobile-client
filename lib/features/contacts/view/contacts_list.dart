@@ -82,45 +82,86 @@ class ContactTile extends StatelessWidget {
       contact.lastMessage,
       myUserId: myUserId,
     );
-    final subtitle = preview.isNotEmpty
-        ? preview
-        : l10n.t(user.online ? 'common.online' : 'common.offline');
+    // Like the desktop: the last message, or the @username when there is none.
+    final subtitle = preview.isNotEmpty ? preview : '@${user.username}';
+    final unread = contact.notifications > 0;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          children: [
-            ContactAvatar(user: user),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.displayName,
-                    style: theme.textTheme.p.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.muted,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            if (contact.notifications > 0) ...[
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              ContactAvatar(user: user),
               const SizedBox(width: 8),
-              ShadBadge(child: Text('${contact.notifications}')),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user.displayName,
+                            style: theme.textTheme.small.copyWith(
+                              fontSize: 14,
+                              height: 1.25,
+                              fontWeight: unread
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            subtitle,
+                            style: theme.textTheme.muted.copyWith(fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (unread) _UnreadBadge(count: contact.notifications),
+                  ],
+                ),
+              ),
             ],
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Round unread count, 20px, like the desktop's badge. Counts above 99 show
+/// as 99+.
+class _UnreadBadge extends StatelessWidget {
+  const _UnreadBadge({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = ShadTheme.of(context);
+    return Container(
+      width: 20,
+      height: 20,
+      margin: const EdgeInsets.only(right: 8),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondary,
+        shape: BoxShape.circle,
+      ),
+      child: Text(
+        count > 99 ? '99+' : '$count',
+        style: theme.textTheme.small.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: theme.colorScheme.secondaryForeground,
         ),
       ),
     );
