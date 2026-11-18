@@ -1,6 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/signed_out_flow.dart';
 import 'package:amber_mobile_client/features/auth/view/verify_account_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +47,7 @@ class _Unreachable extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(l10n.t(AuthFailure.unreachable)),
+        Text(l10n.t(ApiFailure.unreachable)),
         const SizedBox(height: 16),
         ShadButton(
           onPressed: () => context.read<AuthCubit>().start(),

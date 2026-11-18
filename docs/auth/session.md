@@ -4,15 +4,15 @@ Sources: `lib/features/auth/`, `lib/main.dart`, `lib/app.dart`
 
 ## Pieces
 
-- `AuthApi` calls `/auth/v1/*` and `/account/v1/recovery/*`. Every error becomes an `AuthFailure`.
-- `AuthFailure.messageKey` is a translation key. The backend sends keys such as `login.incorrectCredentials` in `detail`, so screens show `l10n.t(failure.messageKey)`. Register also fills `fieldErrors` (`username`, `password`, `full_name`, `email`).
+- `AuthApi` calls `/auth/v1/*` and `/account/v1/recovery/*`. Every error becomes an `ApiFailure`.
+- `ApiFailure.messageKey` is a translation key. The backend sends keys such as `login.incorrectCredentials` in `detail`, so screens show `l10n.t(failure.messageKey)`. Register also fills `fieldErrors` (`username`, `password`, `full_name`, `email`).
 - `AuthCubit` owns the session: launch restore, login, register, sign-out, and the realtime connection.
 - `AuthGate` is the app's home. It shows a screen for each `AuthStatus`, so a signed-out user never reaches an authenticated screen.
 - `main.dart` is the composition root. It builds the session store, API client, realtime client and auth cubit.
 
 ## Error shapes
 
-| Backend response | `AuthFailure` |
+| Backend response | `ApiFailure` |
 |---|---|
 | `{"detail": "login.incorrectCredentials"}` | `messageKey` = the detail |
 | `{"detail": {"errors": [{"field", "error"}]}}` (register, 422) | `fieldErrors`, plus the first error as `messageKey` |

@@ -1,6 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/auth_form_layout.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/code_input.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,7 +53,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     });
     try {
       await action(context.read<AuthCubit>());
-    } on AuthFailure catch (failure) {
+    } on ApiFailure catch (failure) {
       if (!mounted) return;
       setState(() {
         _errorKey = failure.messageKey;

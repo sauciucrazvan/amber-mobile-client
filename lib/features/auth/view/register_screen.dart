@@ -1,6 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/legal_dialog.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/auth_form_layout.dart';
 import 'package:flutter/gestures.dart';
@@ -60,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: email,
         password: password,
       );
-    } on AuthFailure catch (failure) {
+    } on ApiFailure catch (failure) {
       if (!mounted) return;
       setState(() {
         _fieldErrors = failure.fieldErrors;

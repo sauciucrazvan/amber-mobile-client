@@ -1,6 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
-import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
+import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/auth_form_layout.dart';
 import 'package:amber_mobile_client/features/auth/view/widgets/code_input.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,19 +33,19 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
     try {
       try {
         await action(cubit);
-      } on AuthFailure catch (failure) {
+      } on ApiFailure catch (failure) {
         // Verified elsewhere: reload so the gate opens the app.
         if (failure.messageKey != 'register.verify.already_verified') rethrow;
         await cubit.refreshAccount();
       }
-    } on AuthFailure catch (failure) {
+    } on ApiFailure catch (failure) {
       if (mounted) _onFailure(failure);
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
   }
 
-  void _onFailure(AuthFailure failure) {
+  void _onFailure(ApiFailure failure) {
     setState(() {
       _errorKey = failure.messageKey;
       // A code was already sent in the last 30 minutes: let the user enter it.

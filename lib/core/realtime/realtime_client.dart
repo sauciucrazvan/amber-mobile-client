@@ -58,6 +58,9 @@ class RealtimeClient {
 
   Stream<RealtimeConnectionState> get states => _states.stream;
 
+  /// Every incoming event, for features that handle several event names.
+  Stream<Map<String, dynamic>> get events => _events.stream;
+
   /// Events whose `event` field equals [name].
   Stream<Map<String, dynamic>> on(String name) =>
       _events.stream.where((event) => event['event'] == name);
