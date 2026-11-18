@@ -1,7 +1,7 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/auth_failure.dart';
-import 'package:amber_mobile_client/features/auth/view/login_screen.dart';
+import 'package:amber_mobile_client/features/auth/view/signed_out_flow.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -24,7 +24,7 @@ class AuthGate extends StatelessWidget {
                   child: ShadProgress(),
                 ),
                 AuthStatus.unreachable => const _Unreachable(),
-                AuthStatus.unauthenticated => const LoginScreen(),
+                AuthStatus.unauthenticated => const SignedOutFlow(),
                 AuthStatus.authenticated => const _SignedIn(),
               },
             ),

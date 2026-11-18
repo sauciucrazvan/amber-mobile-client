@@ -41,6 +41,33 @@ class AuthFormLayout extends StatelessWidget {
   }
 }
 
+/// "Don't have an account? Register" style prompt. Wraps onto a second line
+/// on narrow screens or large font scales.
+class AuthSwitchPrompt extends StatelessWidget {
+  const AuthSwitchPrompt({
+    super.key,
+    required this.prompt,
+    required this.linkLabel,
+    required this.onPressed,
+  });
+
+  final String prompt;
+  final String linkLabel;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text(prompt),
+        ShadButton.link(onPressed: onPressed, child: Text(linkLabel)),
+      ],
+    );
+  }
+}
+
 /// Shows a translated error, or nothing when [message] is null.
 class AuthErrorAlert extends StatelessWidget {
   const AuthErrorAlert({super.key, required this.message});
