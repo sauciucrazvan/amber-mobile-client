@@ -21,8 +21,18 @@ Tapping a contact on the home screen opens the conversation. This replaces the e
 
 Each time a new newest message arrives, the screen calls `markRead()`, which sends the newest loaded `seq`.
 
+## Message actions
+
+Long-pressing a message opens a sheet (`showMessageActions`):
+
+- **Quick reactions:** 👍 ❤️ 😂 😊, sent through `ConversationCubit.react`. Reacting again with the same emoji removes it.
+- **Reply:** a banner above the composer shows the message being replied to. Sending calls `POST /reply`, and the reply shows a quote of the parent.
+- **Edit** (own text messages only): the composer loads the text and sends a `PATCH`. An `edited` label shows on the bubble.
+- **Delete** (own messages only): asks for confirmation first, then calls `DELETE`. The message is removed locally.
+
+Cancelling the banner clears the reply or edit target.
+
 ## Not in this step
 
-- File, reply, edit, delete and reaction actions come in the next step.
-- Image preview, the emoji picker and file uploads are later steps.
+- File uploads, image preview and the full emoji picker are later steps. The sheet has the four quick reactions only.
 - Dates use `YYYY-MM-DD` for now, because localized dates need `intl`.

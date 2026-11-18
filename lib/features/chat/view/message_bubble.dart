@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -50,14 +51,23 @@ class DaySeparator extends StatelessWidget {
 
 /// One message. Mine align right and use the primary colour.
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, required this.message, required this.isMine});
+  const MessageBubble({
+    super.key,
+    required this.message,
+    required this.isMine,
+    this.onLongPress,
+  });
 
   final ChatMessage message;
   final bool isMine;
 
+  /// Opens the message actions (reply, react, edit, delete).
+  final VoidCallback? onLongPress;
+
   @override
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
+    final l10n = AppLocalizations.of(context);
     final background = isMine
         ? theme.colorScheme.primary
         : theme.colorScheme.muted;
@@ -72,36 +82,84 @@ class MessageBubble extends StatelessWidget {
         constraints: BoxConstraints(
           maxWidth: MediaQuery.sizeOf(context).width * 0.75,
         ),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 3),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: DefaultTextStyle.merge(
-                  style: TextStyle(color: foreground),
-                  child: body,
+        child: GestureDetector(
+          onLongPress: onLongPress,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (message.replyTo case final reply?)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 6),
+                    padding: const EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: foreground.withAlpha(120),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      reply.text ?? '',
+                      style: theme.textTheme.small.copyWith(
+                        color: foreground.withAlpha(180),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: DefaultTextStyle.merge(
+                    style: TextStyle(color: foreground),
+                    child: body,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                [
-                  formatTime(message.createdAt),
-                  if (message.isEdited) 'edited',
-                  if (isMine && message.seen) 'seen',
-                ].join(' · '),
-                style: theme.textTheme.small.copyWith(
-                  color: foreground.withAlpha(180),
+                if (message.reactions.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      for (final reaction in message.reactions)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: foreground.withAlpha(30),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '${reaction.emoji} ${reaction.count}',
+                            style: theme.textTheme.small,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 2),
+                Text(
+                  [
+                    formatTime(message.createdAt),
+                    if (message.isEdited) l10n.t('conversations.edited'),
+                    if (isMine && message.seen) 'seen',
+                  ].join(' · '),
+                  style: theme.textTheme.small.copyWith(
+                    color: foreground.withAlpha(180),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

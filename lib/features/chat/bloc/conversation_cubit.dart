@@ -116,6 +116,16 @@ class ConversationCubit extends Cubit<ConversationState> {
     _insert(message);
   }
 
+  /// Replies to [parent] with text.
+  Future<void> reply(ChatMessage parent, String text) async {
+    final message = await _api.reply(
+      conversationId,
+      messageId: parent.id,
+      text: text,
+    );
+    _insert(message);
+  }
+
   /// Marks everything up to the newest loaded message as read.
   Future<void> markRead() async {
     if (state.messages.isEmpty) return;

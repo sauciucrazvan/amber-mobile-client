@@ -5,6 +5,7 @@ import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/chat/bloc/conversation_cubit.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
+import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
@@ -105,6 +106,11 @@ class _ConversationBodyState extends State<_ConversationBody> {
   final _text = TextEditingController();
   bool _sending = false;
 
+  /// At most one of these is set: the message being replied to, or the one
+  /// being edited.
+  ChatMessage? _replyTo;
+  ChatMessage? _editing;
+
   @override
   void initState() {
     super.initState();
@@ -132,10 +138,25 @@ class _ConversationBodyState extends State<_ConversationBody> {
     final text = _text.text.trim();
     if (text.isEmpty || _sending) return;
 
+    final cubit = context.read<ConversationCubit>();
+    final editing = _editing;
+    final replyTo = _replyTo;
     setState(() => _sending = true);
     try {
-      await context.read<ConversationCubit>().sendText(text);
-      if (mounted) _text.clear();
+      if (editing != null) {
+        await cubit.edit(editing, text);
+      } else if (replyTo != null) {
+        await cubit.reply(replyTo, text);
+      } else {
+        await cubit.sendText(text);
+      }
+      if (mounted) {
+        setState(() {
+          _text.clear();
+          _editing = null;
+          _replyTo = null;
+        });
+      }
     } on ApiFailure catch (failure) {
       if (mounted) _showError(failure.messageKey);
     } finally {
@@ -143,11 +164,120 @@ class _ConversationBodyState extends State<_ConversationBody> {
     }
   }
 
+  Future<void> _showActions(ChatMessage message) async {
+    final cubit = context.read<ConversationCubit>();
+    final action = await showMessageActions(
+      context,
+      message: message,
+      isMine: message.isMine(widget.myUserId),
+      onReact: (emoji) => _react(cubit, message, emoji),
+    );
+    if (!mounted || action == null) return;
+
+    switch (action) {
+      case MessageAction.reply:
+        setState(() {
+          _replyTo = message;
+          _editing = null;
+        });
+      case MessageAction.edit:
+        setState(() {
+          _editing = message;
+          _replyTo = null;
+          _text.text = message.text ?? '';
+        });
+      case MessageAction.delete:
+        await _confirmDelete(cubit, message);
+    }
+  }
+
+  Future<void> _react(
+    ConversationCubit cubit,
+    ChatMessage message,
+    String emoji,
+  ) async {
+    try {
+      await cubit.react(message, emoji);
+    } on ApiFailure catch (failure) {
+      if (mounted) _showError(failure.messageKey);
+    }
+  }
+
+  Future<void> _confirmDelete(
+    ConversationCubit cubit,
+    ChatMessage message,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showShadDialog<bool>(
+      context: context,
+      builder: (dialogContext) => ShadDialog.alert(
+        title: Text(l10n.t('conversations.deleteMessage.confirm.title')),
+        description: Text(
+          l10n.t('conversations.deleteMessage.confirm.description'),
+        ),
+        actions: [
+          ShadButton.outline(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.t('common.cancel')),
+          ),
+          ShadButton.destructive(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.t('common.delete')),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await cubit.delete(message);
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(description: Text(l10n.t('conversations.deleted_message'))),
+        );
+      }
+    } on ApiFailure catch (failure) {
+      if (mounted) _showError(failure.messageKey);
+    }
+  }
+
+  void _cancelTarget() {
+    setState(() {
+      _replyTo = null;
+      _editing = null;
+      _text.clear();
+    });
+  }
+
   void _showError(String key) {
     ShadToaster.of(context).show(
       ShadToast.destructive(
         description: Text(AppLocalizations.of(context).t(key)),
       ),
+    );
+  }
+
+  /// A one-line banner above the composer while replying or editing.
+  Widget? _banner(AppLocalizations l10n) {
+    final target = _editing ?? _replyTo;
+    if (target == null) return null;
+    final label = _editing != null
+        ? l10n.t('conversations.actions.edit')
+        : l10n.t('conversations.actions.reply');
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '$label: ${target.text ?? ''}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        ShadIconButton.ghost(
+          icon: const Icon(LucideIcons.x),
+          onPressed: _cancelTarget,
+        ),
+      ],
     );
   }
 
@@ -198,10 +328,16 @@ class _ConversationBodyState extends State<_ConversationBody> {
                   state: state,
                   myUserId: widget.myUserId,
                   controller: _scroll,
+                  onAction: _showActions,
                 ),
               ),
             ),
-            _Composer(controller: _text, sending: _sending, onSend: _send),
+            _Composer(
+              controller: _text,
+              sending: _sending,
+              onSend: _send,
+              banner: _banner(l10n),
+            ),
           ],
         ),
       ),
@@ -219,11 +355,13 @@ class _MessageList extends StatelessWidget {
     required this.state,
     required this.myUserId,
     required this.controller,
+    required this.onAction,
   });
 
   final ConversationState state;
   final int myUserId;
   final ScrollController controller;
+  final ValueChanged<ChatMessage> onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -256,6 +394,7 @@ class _MessageList extends StatelessWidget {
           key: ValueKey(message.id),
           message: message,
           isMine: message.isMine(myUserId),
+          onLongPress: () => onAction(message),
         );
       },
     );
@@ -281,33 +420,43 @@ class _Composer extends StatelessWidget {
     required this.controller,
     required this.sending,
     required this.onSend,
+    this.banner,
   });
 
   final TextEditingController controller;
   final bool sending;
   final VoidCallback onSend;
 
+  /// Shown above the input while replying or editing.
+  final Widget? banner;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: ShadInput(
-              controller: controller,
-              placeholder: Text(l10n.t('conversations.type_message')),
-              textInputAction: TextInputAction.send,
-              enabled: !sending,
-              onSubmitted: (_) => onSend(),
-            ),
-          ),
-          const SizedBox(width: 8),
-          ShadIconButton(
-            key: const ValueKey('send-message'),
-            icon: const Icon(LucideIcons.send),
-            onPressed: sending ? null : onSend,
+          if (banner != null) ...[banner!, const SizedBox(height: 6)],
+          Row(
+            children: [
+              Expanded(
+                child: ShadInput(
+                  controller: controller,
+                  placeholder: Text(l10n.t('conversations.type_message')),
+                  textInputAction: TextInputAction.send,
+                  enabled: !sending,
+                  onSubmitted: (_) => onSend(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ShadIconButton(
+                key: const ValueKey('send-message'),
+                icon: const Icon(LucideIcons.send),
+                onPressed: sending ? null : onSend,
+              ),
+            ],
           ),
         ],
       ),
