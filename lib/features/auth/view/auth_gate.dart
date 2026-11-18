@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/ui/amber_logo.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/features/auth/view/signed_out_flow.dart';
@@ -31,10 +32,7 @@ class AuthGate extends StatelessWidget {
                 const HomeScreen(),
               _ => Center(
                 child: switch (state.status) {
-                  AuthStatus.unknown => const SizedBox(
-                    width: 160,
-                    child: ShadProgress(),
-                  ),
+                  AuthStatus.unknown => const _Loading(),
                   AuthStatus.unreachable => const _Unreachable(),
                   AuthStatus.unauthenticated => const SignedOutFlow(),
                   AuthStatus.authenticated => const VerifyAccountScreen(),
@@ -64,6 +62,23 @@ class _Unreachable extends StatelessWidget {
           // No shared translation key for "Retry" exists yet.
           child: const Text('Retry'),
         ),
+      ],
+    );
+  }
+}
+
+/// Shown while the session is restored, like the desktop's loading screen.
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const AmberLogo(size: 64),
+        const SizedBox(height: 32),
+        const SizedBox(width: 160, child: ShadProgress()),
       ],
     );
   }

@@ -2,7 +2,7 @@
     <!-- The app talks to the Amber API and WebSocket in every build type. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="amber_mobile_client"
+        android:label="Amber"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
