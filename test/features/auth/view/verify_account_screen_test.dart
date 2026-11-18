@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/home/home_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -92,7 +93,7 @@ void main() {
     await _tap(tester, 'Verify');
 
     expect(cubit.state.needsVerification, isFalse);
-    expect(find.text('Ana Pop'), findsOneWidget);
+    expect(find.byType(HomeScreen), findsOneWidget);
   });
 
   testWidgets('a code sent recently goes straight to the code step', (
@@ -160,6 +161,6 @@ void main() {
     await _tap(tester, 'Send');
 
     expect(cubit.state.needsVerification, isFalse);
-    expect(find.text('Ana Pop'), findsOneWidget);
+    expect(find.byType(HomeScreen), findsOneWidget);
   });
 }

@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/home/home_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -64,6 +65,6 @@ void main() {
     await settleRequests(tester);
 
     expect(cubit.state.status, AuthStatus.authenticated);
-    expect(find.text('Ana Pop'), findsOneWidget);
+    expect(find.byType(HomeScreen), findsOneWidget);
   });
 }
