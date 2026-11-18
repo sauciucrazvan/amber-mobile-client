@@ -80,7 +80,6 @@ void main() {
     expect(find.text('Ana Pop'), findsOneWidget);
     expect(find.text('@ana'), findsOneWidget);
     expect(find.text('Hello from Ana'), findsOneWidget);
-    expect(find.text('Verified'), findsOneWidget);
   });
 
   testWidgets('sign out asks first, and cancelling keeps the session', (

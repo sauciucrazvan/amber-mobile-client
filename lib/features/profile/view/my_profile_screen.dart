@@ -20,7 +20,7 @@ Future<void> showMyProfile(BuildContext context) {
   );
 }
 
-/// Your own profile: avatar, name, username, verified badge, bio and dates,
+/// Your own profile: avatar, name, username, bio and dates,
 /// with sign-out at the bottom. Sign-out asks for confirmation first.
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -60,10 +60,6 @@ class MyProfileScreen extends StatelessWidget {
             style: theme.textTheme.muted,
             textAlign: TextAlign.center,
           ),
-          if (account.verified) ...[
-            const SizedBox(height: 8),
-            ShadBadge(child: Text(l10n.t('common.verified'))),
-          ],
           const SizedBox(height: 12),
           BioBox(bio: account.bio),
           const SizedBox(height: 12),
