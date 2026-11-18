@@ -206,4 +206,52 @@ void main() {
       'November 18, 2026',
     );
   });
+
+  testWidgets('tapping a reply quote calls onQuoteTap', (tester) async {
+    var tapped = false;
+    final message = ChatMessage.fromJson({
+      'id': 'm-9',
+      'conversation_id': 'c-1',
+      'sender_id': 1,
+      'seq': 9,
+      'type': 'text',
+      'content': {
+        'text': 'agreed',
+        'reply_to': {
+          'id': 'm-1',
+          'sender_id': 2,
+          'type': 'text',
+          'content': {'text': 'see you tomorrow'},
+        },
+      },
+      'reaction_details': [],
+      'created_at': '2026-11-18T10:00:00+00:00',
+      'edited_at': null,
+      'seen': false,
+    });
+    final localizations = (await tester.runAsync(
+      () => AppLocalizations.load('en'),
+    ))!;
+    await tester.pumpWidget(
+      AppLocalizationsScope(
+        localizations: localizations,
+        child: ShadApp.custom(
+          appBuilder: (_) => MaterialApp(
+            home: Scaffold(
+              body: MessageBubble(
+                message: message,
+                isMine: true,
+                myUserId: 1,
+                nameOf: (_) => 'Bob',
+                onQuoteTap: () => tapped = true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('see you tomorrow'));
+
+    expect(tapped, isTrue);
+  });
 }

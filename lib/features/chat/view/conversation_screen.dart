@@ -112,6 +112,9 @@ class _ConversationBodyState extends State<_ConversationBody> {
   final _text = TextEditingController();
   bool _sending = false;
 
+  /// Keys for scrolling to a message when its reply quote is tapped.
+  final _messageKeys = <String, GlobalKey>{};
+
   /// At most one of these is set: the message being replied to, or the one
   /// being edited.
   ChatMessage? _replyTo;
@@ -251,6 +254,21 @@ class _ConversationBodyState extends State<_ConversationBody> {
       case MessageAction.delete:
         await _confirmDelete(cubit, message);
     }
+  }
+
+  GlobalKey _keyFor(String messageId) =>
+      _messageKeys.putIfAbsent(messageId, GlobalKey.new);
+
+  /// Scrolls to a loaded message, as the desktop does for reply quotes. A
+  /// message that isn't loaded yet can't be scrolled to.
+  void _jumpTo(String messageId) {
+    final context = _messageKeys[messageId]?.currentContext;
+    if (context == null) return;
+    Scrollable.ensureVisible(
+      context,
+      alignment: 0.5,
+      duration: const Duration(milliseconds: 300),
+    );
   }
 
   /// The display name for a user id in this conversation.
@@ -399,6 +417,8 @@ class _ConversationBodyState extends State<_ConversationBody> {
                   controller: _scroll,
                   onAction: _showActions,
                   onReactionTap: _showReactions,
+                  onQuoteTap: _jumpTo,
+                  keyFor: _keyFor,
                   nameOf: _nameOf,
                 ),
               ),
@@ -430,6 +450,8 @@ class _MessageList extends StatelessWidget {
     required this.controller,
     required this.onAction,
     required this.onReactionTap,
+    required this.onQuoteTap,
+    required this.keyFor,
     required this.nameOf,
   });
 
@@ -440,6 +462,12 @@ class _MessageList extends StatelessWidget {
 
   /// Opens the reactions panel for a message, given the tapped emoji.
   final void Function(ChatMessage message) onReactionTap;
+
+  /// Scrolls to the message with this id.
+  final void Function(String messageId) onQuoteTap;
+
+  /// The key used to scroll to a message.
+  final GlobalKey Function(String messageId) keyFor;
 
   /// Turns a user id into a name, for reply quotes.
   final String Function(int userId) nameOf;
@@ -472,14 +500,20 @@ class _MessageList extends StatelessWidget {
         if (item is DateTime) return DaySeparator(day: item);
         final message = item as ChatMessage;
         if (message.type == 'log') return LogSeparator(message: message);
-        return MessageBubble(
-          key: ValueKey(message.id),
-          message: message,
-          isMine: message.isMine(myUserId),
-          myUserId: myUserId,
-          nameOf: nameOf,
-          onLongPress: () => onAction(message),
-          onReactionTap: () => onReactionTap(message),
+        return KeyedSubtree(
+          key: keyFor(message.id),
+          child: MessageBubble(
+            key: ValueKey(message.id),
+            message: message,
+            isMine: message.isMine(myUserId),
+            myUserId: myUserId,
+            nameOf: nameOf,
+            onLongPress: () => onAction(message),
+            onReactionTap: () => onReactionTap(message),
+            onQuoteTap: message.replyTo == null
+                ? null
+                : () => onQuoteTap(message.replyTo!.id),
+          ),
         );
       },
     );

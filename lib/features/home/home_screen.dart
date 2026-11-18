@@ -11,6 +11,7 @@ import 'package:amber_mobile_client/features/profile/view/my_profile_screen.dart
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
+import 'package:amber_mobile_client/features/home/realtime_status_bar.dart';
 import 'package:amber_mobile_client/features/contacts/view/requests_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -57,8 +58,10 @@ class _HomeViewState extends State<_HomeView> {
       (ContactsCubit cubit) => cubit.state.requests.length,
     );
 
+    final services = context.read<AppServices>();
     return Column(
       children: [
+        RealtimeStatusBar(states: services.realtimeStates),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
           child: Row(

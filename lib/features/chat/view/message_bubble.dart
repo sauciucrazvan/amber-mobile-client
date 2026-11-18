@@ -1,6 +1,7 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/l10n/dates.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
+import 'package:amber_mobile_client/core/ui/open_url.dart';
 import 'package:amber_mobile_client/features/chat/view/image_preview.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -119,6 +120,7 @@ class MessageBubble extends StatelessWidget {
     required this.nameOf,
     this.onLongPress,
     this.onReactionTap,
+    this.onQuoteTap,
   });
 
   final ChatMessage message;
@@ -135,6 +137,9 @@ class MessageBubble extends StatelessWidget {
 
   /// Opens the reactions panel.
   final VoidCallback? onReactionTap;
+
+  /// Scrolls to the message this one replies to.
+  final VoidCallback? onQuoteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +174,7 @@ class MessageBubble extends StatelessWidget {
                 authorName: reply.senderId == myUserId
                     ? l10n.t('conversations.you')
                     : nameOf(reply.senderId),
+                onTap: onQuoteTap,
               ),
             _body(context, foreground),
             const SizedBox(height: 2),
@@ -281,10 +287,15 @@ class MessageBubble extends StatelessWidget {
 /// The message being replied to, styled like the desktop's quote: a thick
 /// left border on a faint background, with the author and two lines of text.
 class _ReplyQuote extends StatelessWidget {
-  const _ReplyQuote({required this.reply, required this.authorName});
+  const _ReplyQuote({
+    required this.reply,
+    required this.authorName,
+    this.onTap,
+  });
 
   final ReplyTo reply;
   final String authorName;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -293,56 +304,61 @@ class _ReplyQuote extends StatelessWidget {
     final muted = theme.colorScheme.mutedForeground;
     final isFile = reply.type == 'file';
 
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: muted.withAlpha(26),
-        border: Border(left: BorderSide(color: muted.withAlpha(77), width: 4)),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(2),
-          bottomLeft: Radius.circular(2),
-          topRight: Radius.circular(6),
-          bottomRight: Radius.circular(6),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            authorName.isEmpty ? l10n.t('conversations.you') : authorName,
-            style: theme.textTheme.small.copyWith(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: muted,
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: muted.withAlpha(26),
+          border: Border(
+            left: BorderSide(color: muted.withAlpha(77), width: 4),
           ),
-          const SizedBox(height: 2),
-          if (isFile)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(LucideIcons.paperclip, size: 14, color: muted),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    l10n.t('conversations.files.attachment'),
-                    style: theme.textTheme.small.copyWith(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            )
-          else
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(2),
+            bottomLeft: Radius.circular(2),
+            topRight: Radius.circular(6),
+            bottomRight: Radius.circular(6),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Text(
-              reply.text ?? '',
-              style: theme.textTheme.small.copyWith(fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              authorName.isEmpty ? l10n.t('conversations.you') : authorName,
+              style: theme.textTheme.small.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: muted,
+              ),
             ),
-        ],
+            const SizedBox(height: 2),
+            if (isFile)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.paperclip, size: 14, color: muted),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      l10n.t('conversations.files.attachment'),
+                      style: theme.textTheme.small.copyWith(fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              )
+            else
+              Text(
+                reply.text ?? '',
+                style: theme.textTheme.small.copyWith(fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -434,6 +450,14 @@ class _FileAttachment extends StatelessWidget {
 
   Widget _fileRow(BuildContext context) {
     final theme = ShadTheme.of(context);
+    return GestureDetector(
+      onTap: () => openFileUrl(file.url),
+      behavior: HitTestBehavior.opaque,
+      child: _fileRowContent(theme),
+    );
+  }
+
+  Widget _fileRowContent(ShadThemeData theme) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

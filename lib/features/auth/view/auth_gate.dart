@@ -59,8 +59,7 @@ class _Unreachable extends StatelessWidget {
         const SizedBox(height: 16),
         ShadButton(
           onPressed: () => context.read<AuthCubit>().start(),
-          // No shared translation key for "Retry" exists yet.
-          child: const Text('Retry'),
+          child: Text(AppLocalizations.of(context).t('common.retry')),
         ),
       ],
     );
