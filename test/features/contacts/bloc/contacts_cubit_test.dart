@@ -52,6 +52,7 @@ void main() {
     });
     events = StreamController<Map<String, dynamic>>.broadcast();
     final cubit = ContactsCubit(
+      myUserId: 1,
       api: ContactsApi(
         ApiClient(
           sessionStore: SessionStore(MemoryKeyValueStorage()),
@@ -90,6 +91,7 @@ void main() {
   test('a failed load reports failed', () async {
     adapter = FakeHttpAdapter((_) => jsonResponse({'detail': 'x'}, 500));
     final cubit = ContactsCubit(
+      myUserId: 1,
       api: ContactsApi(
         ApiClient(
           sessionStore: SessionStore(MemoryKeyValueStorage()),
@@ -281,6 +283,63 @@ void main() {
       });
       expect(cubit.state.contacts.single.user.online, isFalse);
       expect(cubit.state.contacts.single.user.lastActiveAt, isNotNull);
+    });
+  });
+
+  group('unread counts', () {
+    Map<String, dynamic> chatMessage(int senderId) => {
+      'event': 'message.created',
+      'conversation_id': 'c-1',
+      'payload': {
+        'message': {'id': 'm-$senderId', 'sender_id': senderId, 'seq': 9},
+      },
+    };
+
+    int unreadOf(ContactsCubit cubit, int userId) => cubit.state.contacts
+        .firstWhere((c) => c.user.id == userId)
+        .notifications;
+
+    test('a new message from a contact counts as unread', () async {
+      final cubit = await loadedCubit(
+        contacts: [_contact(2, 'bob', '2026-11-10T00:00:00+00:00')],
+      );
+
+      await emitEvent(chatMessage(2));
+      await emitEvent(chatMessage(2));
+
+      expect(unreadOf(cubit, 2), 2);
+    });
+
+    test('my own messages do not count as unread', () async {
+      final cubit = await loadedCubit(
+        contacts: [_contact(2, 'bob', '2026-11-10T00:00:00+00:00')],
+      );
+
+      await emitEvent(chatMessage(1));
+
+      expect(unreadOf(cubit, 2), 0);
+    });
+
+    test('a message from someone not in the list is ignored', () async {
+      final cubit = await loadedCubit(
+        contacts: [_contact(2, 'bob', '2026-11-10T00:00:00+00:00')],
+      );
+
+      await emitEvent(chatMessage(7));
+
+      expect(unreadOf(cubit, 2), 0);
+      expect(cubit.state.contacts, hasLength(1));
+    });
+
+    test('clearUnread resets the count', () async {
+      final cubit = await loadedCubit(
+        contacts: [_contact(2, 'bob', '2026-11-10T00:00:00+00:00')],
+      );
+      await emitEvent(chatMessage(2));
+
+      cubit.clearUnread(2);
+
+      expect(unreadOf(cubit, 2), 0);
     });
   });
 }
