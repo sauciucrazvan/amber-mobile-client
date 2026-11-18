@@ -1,4 +1,6 @@
+import 'package:amber_mobile_client/core/ui/open_url.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 /// Opens a full-screen, pinch-to-zoom view of an image attachment.
 Future<void> showImagePreview(
@@ -32,6 +34,14 @@ class ImagePreviewScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: Text(filename, overflow: TextOverflow.ellipsis),
+        actions: [
+          // Download, like the desktop's image preview.
+          ShadIconButton.ghost(
+            key: const ValueKey('download-image'),
+            icon: const Icon(LucideIcons.download, color: Colors.white),
+            onPressed: () => openFileUrl(url),
+          ),
+        ],
       ),
       body: Center(
         child: InteractiveViewer(

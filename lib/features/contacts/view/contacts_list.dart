@@ -32,8 +32,7 @@ class ContactsList extends StatelessWidget {
             const SizedBox(height: 12),
             ShadButton.outline(
               onPressed: () => context.read<ContactsCubit>().load(),
-              // No shared translation key for "Retry" exists yet.
-              child: const Text('Retry'),
+              child: Text(l10n.t('common.retry')),
             ),
           ],
         ),

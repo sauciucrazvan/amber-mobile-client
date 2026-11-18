@@ -41,6 +41,7 @@ Future<void> main() async {
   final services = AppServices(
     apiClient: apiClient,
     realtimeEvents: realtime.events,
+    realtimeStates: realtime.states,
   );
 
   runApp(
