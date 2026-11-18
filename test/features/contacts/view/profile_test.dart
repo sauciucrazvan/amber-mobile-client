@@ -1,6 +1,5 @@
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -74,6 +73,18 @@ FakeHttpHandler _backend(
     if (path.endsWith('/contacts/v1/profile/bob')) {
       return jsonResponse(_bobProfile, 200);
     }
+    if (path.endsWith('/chats/v1/direct/2')) {
+      return jsonResponse({
+        'id': 'c-1',
+        'type': 'direct',
+        'direct_pair': 'pair',
+        'created_at': '2026-11-01T00:00:00+00:00',
+        'notifications': 0,
+      }, 200);
+    }
+    if (path.contains('/chats/v1/c-1/messages')) {
+      return jsonResponse([], 200);
+    }
     if (path.endsWith('/contacts/v1/blocked')) {
       return jsonResponse(blocked, 200);
     }
@@ -95,6 +106,18 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await settleRequests(tester);
 }
 
+/// Opens Bob's profile through the chat: tap the contact, then the header.
+Future<void> _openProfile(WidgetTester tester) async {
+  await _tap(tester, find.text('Bob Ionescu'));
+  await _tap(
+    tester,
+    find.descendant(
+      of: find.byType(AppBar),
+      matching: find.text('Bob Ionescu'),
+    ),
+  );
+}
+
 void main() {
   testWidgets('tapping a contact opens the profile with bio and dates', (
     tester,
@@ -102,7 +125,7 @@ void main() {
     final log = <RequestOptions>[];
     await _signIn(tester, _backend(log));
 
-    await _tap(tester, find.text('Bob Ionescu'));
+    await _openProfile(tester);
 
     expect(find.byType(ContactProfileScreen), findsOneWidget);
     expect(find.text('Coffee first.'), findsOneWidget);
@@ -116,7 +139,7 @@ void main() {
   ) async {
     final log = <RequestOptions>[];
     await _signIn(tester, _backend(log));
-    await _tap(tester, find.text('Bob Ionescu'));
+    await _openProfile(tester);
 
     await _tap(tester, find.text('Block'));
     expect(find.byType(ShadDialog), findsOneWidget);
@@ -138,7 +161,7 @@ void main() {
   testWidgets('cancelling the block confirmation does nothing', (tester) async {
     final log = <RequestOptions>[];
     await _signIn(tester, _backend(log));
-    await _tap(tester, find.text('Bob Ionescu'));
+    await _openProfile(tester);
 
     await _tap(tester, find.text('Block'));
     await _tap(tester, find.text('Cancel'));

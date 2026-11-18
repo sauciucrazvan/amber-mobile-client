@@ -105,7 +105,8 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     try {
       await run(cubit);
       if (!mounted) return;
-      Navigator.of(context).pop();
+      // The contact is gone, so a chat opened from their profile closes too.
+      Navigator.of(context).popUntil((route) => route.isFirst);
       showContactToast(context, successKey, username: user.displayName);
     } on ApiFailure catch (failure) {
       if (!mounted) return;
