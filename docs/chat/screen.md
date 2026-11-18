@@ -10,7 +10,7 @@ Tapping a contact on the home screen opens the conversation. This replaces the e
 
 ## Layout
 
-- **Header:** the contact's name and their status (`common.online`, or the last active date). Tapping the header opens the profile.
+- **Header** (`ConversationHeader`): the contact's avatar with presence dot, their name, and a second line. Offline contacts alternate every ten seconds between `@username` and "Last active 5m ago", as on the desktop. Online contacts show `@username`. Presence updates while the chat is open. Tapping the header opens the profile.
 - **Messages:** newest at the bottom. Scrolling up loads older pages before the list reaches the top. A spinner shows while a page loads.
 - **Day dividers:** each day's first message gets a divider above it, labelled `YYYY-MM-DD`.
 - **Bubbles:** the current user's messages align right in the primary colour, others align left. Each bubble shows the time, `edited` when edited, and `seen` on the current user's messages once the other side has read them.

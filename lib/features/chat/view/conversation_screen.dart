@@ -8,6 +8,7 @@ import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_file_rules.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
+import 'package:amber_mobile_client/features/chat/view/conversation_header.dart';
 import 'package:amber_mobile_client/features/chat/view/emoji_sheet.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
 import 'package:amber_mobile_client/features/chat/view/reactions_panel.dart';
@@ -354,31 +355,17 @@ class _ConversationBodyState extends State<_ConversationBody> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = ShadTheme.of(context);
     final contact = widget.contact;
 
     return Scaffold(
       appBar: AppBar(
-        title: GestureDetector(
+        titleSpacing: 0,
+        title: ConversationHeader(
+          contact: contact,
           onTap: () => showContactProfile(
             context,
             contact.username,
             context.read<ContactsCubit>(),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(contact.displayName),
-              Text(
-                contact.online
-                    ? l10n.t('common.online')
-                    : contact.lastActiveAt == null
-                    ? ''
-                    : formatDay(dayOf(contact.lastActiveAt)),
-                style: theme.textTheme.small,
-              ),
-            ],
           ),
         ),
       ),
