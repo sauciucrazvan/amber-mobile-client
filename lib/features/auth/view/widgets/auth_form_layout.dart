@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/core/ui/amber_logo.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -25,6 +26,8 @@ class AuthFormLayout extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Center(child: AmberLogo(size: 48)),
+            const SizedBox(height: 16),
             Text(title, style: theme.textTheme.h3, textAlign: TextAlign.center),
             const SizedBox(height: 8),
             Text(

@@ -70,6 +70,7 @@ flutter:
   # Translations, shared key-for-key with the desktop client.
   assets:
     - assets/locales/
+    - assets/images/
 
   # To add other assets to your application, add an assets section, like this:
   # assets:
