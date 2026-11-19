@@ -34,7 +34,15 @@ class ContactAvatar extends StatelessWidget {
           ShadAvatar(
             user.avatarUrl,
             size: Size.square(size),
-            placeholder: Text(_initials),
+            // The initials grow with the avatar, so small and large avatars
+            // read the same.
+            placeholder: Text(
+              _initials,
+              style: TextStyle(
+                fontSize: size * 0.36,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
           // Green when online, red when offline, as on the desktop.
           if (showPresence)
