@@ -1,11 +1,11 @@
 # Chat: Emoji picker and reactions panel
 
-Sources: `lib/features/chat/view/emoji_sheet.dart`, `lib/features/chat/view/reactions_panel.dart`, `lib/features/chat/view/message_actions.dart`, `lib/features/chat/view/message_bubble.dart`
+Sources: `lib/features/chat/data/emoji_catalog.dart`, `lib/features/chat/view/emoji_sheet.dart`, `lib/features/chat/view/reactions_panel.dart`, `lib/features/chat/view/message_actions.dart`, `lib/features/chat/view/message_bubble.dart`
 
 ## Adding a reaction
 
 - **Quick reactions:** 👍 ❤️ 😂 😊 at the top of the long-press sheet, as on the desktop.
-- **More reactions:** opens the full emoji picker (`emoji_picker_flutter`, in a bottom sheet). Choosing an emoji adds it as a reaction. The picker remembers recent emoji in `shared_preferences`.
+- **More reactions:** opens the full emoji picker, built in the app (`EmojiPickerSheet`), in a bottom sheet. It has a search box, category tabs and a grid, with the same categories as the desktop. Choosing an emoji adds it as a reaction. The emoji list is bundled in `assets/emoji/catalog.json`, from the desktop's emoji data (set 15), and loads once.
 
 Both paths call `ConversationCubit.react`. If the current user already reacted with that emoji, it removes the reaction instead.
 

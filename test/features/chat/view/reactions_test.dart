@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:dio/dio.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:amber_mobile_client/features/chat/data/emoji_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:amber_mobile_client/features/chat/view/emoji_sheet.dart';
 
 import '../../../support/auth_test_app.dart';
 import '../../../support/fake_http_adapter.dart';
@@ -147,6 +149,31 @@ void main() {
     await tester.pumpAndSettle();
     await _tap(tester, find.byKey(const ValueKey('more-reactions')));
 
-    expect(find.byType(EmojiPicker), findsOneWidget);
+    expect(find.byType(EmojiPickerSheet), findsOneWidget);
+  });
+
+  testWidgets('the picker finds an emoji by its name', (tester) async {
+    final calls = <RequestOptions>[];
+    // The emoji list is read from a bundled asset in real time. Load it first,
+    // so the sheet has it when it opens.
+    await tester.runAsync(EmojiCatalog.load);
+    await _openChat(tester, calls);
+
+    await tester.longPress(find.text('hello there'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('more-reactions')));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.descendant(
+        of: find.byKey(const ValueKey('emoji-search')),
+        matching: find.byType(EditableText),
+      ),
+      'grinning',
+    );
+    await tester.pump();
+
+    expect(find.text('😀'), findsWidgets);
+    expect(find.text('No emojis found.'), findsNothing);
   });
 }
