@@ -64,10 +64,11 @@ void main() {
     expect(account.verified, isTrue);
   });
 
-  test('the desktop neutral palette is used in both modes', () {
+  test('the desktop neutral surfaces, with the logo orange as primary', () {
     expect(AppTheme.light().colorScheme.background, const Color(0xFFFFFFFF));
     expect(AppTheme.dark().colorScheme.background, const Color(0xFF0A0A0A));
-    expect(AppTheme.dark().colorScheme.primary, const Color(0xFFE5E5E5));
+    expect(AppTheme.light().colorScheme.primary, const Color(0xFFFF9831));
+    expect(AppTheme.dark().colorScheme.primary, const Color(0xFFFF9831));
   });
 
   testWidgets('the avatar in the header opens my profile', (tester) async {
