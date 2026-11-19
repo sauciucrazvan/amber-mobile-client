@@ -6,6 +6,7 @@ import 'package:amber_mobile_client/features/calls/bloc/call_devices_cubit.dart'
 import 'package:amber_mobile_client/features/calls/data/call_devices.dart';
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/settings/data/app_info.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -330,9 +331,7 @@ class _BlockedRow extends StatelessWidget {
         key: const ValueKey('open-blocked'),
         size: ShadButtonSize.sm,
         onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => const BlockedAccountsScreen(),
-          ),
+          AmberPageRoute<void>(builder: (_) => const BlockedAccountsScreen()),
         ),
         child: Text(l10n.t('contacts.blocked.trigger')),
       ),
