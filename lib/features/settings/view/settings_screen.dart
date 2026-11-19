@@ -2,6 +2,7 @@ import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/theme/appearance_cubit.dart';
 import 'package:amber_mobile_client/core/l10n/language_cubit.dart';
 import 'package:amber_mobile_client/features/auth/view/legal_dialog.dart';
+import 'package:amber_mobile_client/features/account/view/account_settings.dart';
 import 'package:amber_mobile_client/features/calls/bloc/call_devices_cubit.dart';
 import 'package:amber_mobile_client/features/calls/data/call_devices.dart';
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
@@ -35,6 +36,10 @@ class SettingsScreen extends StatelessWidget {
               _Section(
                 title: l10n.t('settings.general.language.title'),
                 children: const [_LanguageRow()],
+              ),
+              _Section(
+                title: l10n.t('settings.tabs.account'),
+                children: const [AccountSettings()],
               ),
               _Section(
                 title: l10n.t('settings.tabs.devices'),

@@ -12,6 +12,7 @@ class Account {
     this.avatarUrl,
     this.registeredAt,
     this.lastActiveAt,
+    this.privacySettings = const {},
   });
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
@@ -24,6 +25,12 @@ class Account {
     avatarUrl: json['avatar_url'] as String?,
     registeredAt: parseServerTime(json['registered_at']),
     lastActiveAt: parseServerTime(json['last_active_at']),
+    privacySettings: {
+      for (final entry
+          in ((json['privacy_settings'] as Map<String, dynamic>?) ?? const {})
+              .entries)
+        if (entry.value is bool) entry.key: entry.value as bool,
+    },
   );
 
   final int id;
@@ -35,6 +42,12 @@ class Account {
   final String? avatarUrl;
   final DateTime? registeredAt;
   final DateTime? lastActiveAt;
+
+  /// Privacy switches by name. A setting the server does not send is on, as
+  /// the server treats it.
+  final Map<String, bool> privacySettings;
+
+  bool get allowAddByEmail => privacySettings['allow_add_by_email'] ?? true;
 
   String get displayName {
     final name = fullName?.trim();
@@ -51,5 +64,6 @@ class Account {
     avatarUrl: avatarUrl,
     registeredAt: registeredAt,
     lastActiveAt: lastActiveAt,
+    privacySettings: privacySettings,
   );
 }
