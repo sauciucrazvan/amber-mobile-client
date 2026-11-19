@@ -4,7 +4,7 @@ Sources: `lib/features/contacts/view/profile_screen.dart`, `lib/features/contact
 
 ## Profile
 
-Tapping a contact opens `ContactProfileScreen` (`showContactProfile`). It loads `GET /contacts/v1/profile/{username}` and shows:
+Tapping a contact opens `ContactProfileScreen` (`showContactProfile`) as a full page with a back button (`AmberPage`). The layout matches the desktop's profile dialog, with text aligned to the left. It loads `GET /contacts/v1/profile/{username}` and shows:
 
 - avatar with presence dot, display name and `@username`;
 - bio, or `profile.bio.empty` when there is none;

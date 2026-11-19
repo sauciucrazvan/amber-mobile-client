@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/core/ui/amber_page.dart';
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -128,6 +129,8 @@ void main() {
     await _openProfile(tester);
 
     expect(find.byType(ContactProfileScreen), findsOneWidget);
+    expect(find.byType(AmberPage), findsOneWidget);
+    expect(find.byType(ShadDialog), findsNothing);
     expect(find.text('Coffee first.'), findsOneWidget);
     expect(find.text('Member since'), findsOneWidget);
     expect(find.text('January 2026'), findsOneWidget);
@@ -142,7 +145,7 @@ void main() {
     await _openProfile(tester);
 
     await _tap(tester, find.text('Block'));
-    expect(find.byType(ShadDialog), findsNWidgets(2));
+    expect(find.byType(ShadDialog), findsOneWidget);
     await _tap(
       tester,
       find.descendant(
