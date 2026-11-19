@@ -20,11 +20,11 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - The home screen has a bottom bar with Chats and Inbox, built from shadcn buttons since `shadcn_ui` has no bottom bar. Calls, call history and settings will be added here.
 - The add-contact button floats over the bottom-right of the contacts, as on the desktop sidebar.
 - Contact avatars show a green dot when online and a red dot when offline, as on the desktop.
-- Dialogs use `AmberDialog`: rounded corners (8px) and left-aligned title and text.
+- Dialogs use `AmberDialog`: rounded corners (8px) on every screen size, and left-aligned title and text.
 - Dialogs sit 16px in from the screen edges, with 16px between their parts and 8px between buttons.
 - The chat composer's text field and send button share one border, as on the desktop's button group. The attachment button sits to their left.
 - Profiles open as full pages (`AmberPage`) with a back button, using the same layout as the desktop's profile dialog.
 - The Chats tab uses the `messageCircle` icon, as on the desktop.
 - The theme keeps the desktop's neutral palette, so buttons stay neutral. The logo's orange (`AppColors.brand`, `#FF9831`) is used only for the round add-contact button, with white text.
-- Profile pages are centred on the screen, and sign-out is pinned to the bottom (`AmberPage.footer`).
+- Profile pages are centred horizontally and start at the top, and sign-out is pinned to the bottom (`AmberPage.footer`).
 - The Chats header has no logo.

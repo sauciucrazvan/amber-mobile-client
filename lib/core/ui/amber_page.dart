@@ -28,19 +28,13 @@ class AmberPage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.topCenter,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 425),
-                        child: child,
-                      ),
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 425),
+                    child: child,
                   ),
                 ),
               ),
