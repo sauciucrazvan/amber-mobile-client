@@ -556,6 +556,7 @@ class _Composer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = ShadTheme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
       child: Column(
@@ -570,20 +571,39 @@ class _Composer extends StatelessWidget {
                 onPressed: sending ? null : onAttach,
               ),
               const SizedBox(width: 4),
+              // The field and the send button share one border, as on the
+              // desktop's button group.
               Expanded(
-                child: ShadInput(
-                  controller: controller,
-                  placeholder: Text(l10n.t('conversations.type_message')),
-                  textInputAction: TextInputAction.send,
-                  enabled: !sending,
-                  onSubmitted: (_) => onSend(),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.colorScheme.input),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ShadInput(
+                          controller: controller,
+                          placeholder: Text(
+                            l10n.t('conversations.type_message'),
+                          ),
+                          textInputAction: TextInputAction.send,
+                          enabled: !sending,
+                          onSubmitted: (_) => onSend(),
+                          decoration: const ShadDecoration(
+                            border: ShadBorder.none,
+                            focusedBorder: ShadBorder.none,
+                          ),
+                        ),
+                      ),
+                      ShadIconButton.ghost(
+                        key: const ValueKey('send-message'),
+                        icon: const Icon(LucideIcons.send),
+                        onPressed: sending ? null : onSend,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              ShadIconButton(
-                key: const ValueKey('send-message'),
-                icon: const Icon(LucideIcons.send),
-                onPressed: sending ? null : onSend,
               ),
             ],
           ),

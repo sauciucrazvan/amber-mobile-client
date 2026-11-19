@@ -19,15 +19,21 @@ class AmberDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadDialog(
-      title: title,
-      description: description,
-      actions: actions ?? const [],
-      radius: BorderRadius.circular(8),
-      titleTextAlign: TextAlign.start,
-      descriptionTextAlign: TextAlign.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      child: child,
+    // The inset keeps the dialog off the screen edges on a phone.
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: ShadDialog(
+        title: title,
+        description: description,
+        actions: actions ?? const [],
+        radius: BorderRadius.circular(8),
+        titleTextAlign: TextAlign.start,
+        descriptionTextAlign: TextAlign.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        gap: 16,
+        actionsGap: 8,
+        child: child,
+      ),
     );
   }
 }
