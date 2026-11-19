@@ -38,12 +38,12 @@ class CallCubit extends Cubit<CallState> {
     if (state.phase != CallPhase.idle) return;
     if (!ready) {
       await media.close();
-      emit(const CallState(errorKey: 'calls.errors.permission'));
+      emit(const CallState(errorKey: 'calls.toasts.mediaAccessFailed'));
       return;
     }
     if (!signaling.invite(peer.username, mode)) {
       await media.close();
-      emit(const CallState(errorKey: 'calls.errors.unreachable'));
+      emit(const CallState(errorKey: 'calls.toasts.connectionUnavailable'));
       return;
     }
     emit(CallState(phase: CallPhase.outgoing, peer: peer, mode: mode));
@@ -59,12 +59,12 @@ class CallCubit extends Cubit<CallState> {
     if (!ready) {
       signaling.reject(callId);
       await media.close();
-      emit(const CallState(errorKey: 'calls.errors.permission'));
+      emit(const CallState(errorKey: 'calls.toasts.mediaAccessFailed'));
       return;
     }
     if (!signaling.accept(callId)) {
       await media.close();
-      emit(const CallState(errorKey: 'calls.errors.unreachable'));
+      emit(const CallState(errorKey: 'calls.toasts.connectionUnavailable'));
       return;
     }
     emit(state.copyWith(phase: CallPhase.connecting));
@@ -201,7 +201,7 @@ class CallCubit extends Cubit<CallState> {
           return;
         }
         await media.close();
-        emit(const CallState(errorKey: 'calls.errors.failed'));
+        emit(const CallState(errorKey: 'calls.toasts.genericError'));
     }
   }
 

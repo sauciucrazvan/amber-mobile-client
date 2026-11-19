@@ -51,7 +51,7 @@ class CallState {
   final String? endReason;
 
   /// A translation key for a problem to show once, such as a refused
-  /// permission.
+  /// permission. The keys are under `calls.toasts`.
   final String? errorKey;
 
   bool get isActive => phase != CallPhase.idle && phase != CallPhase.ended;

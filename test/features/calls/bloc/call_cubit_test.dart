@@ -115,7 +115,7 @@ void main() {
       await h.cubit.startCall(_bob, CallMode.video);
 
       expect(h.cubit.state.phase, CallPhase.idle);
-      expect(h.cubit.state.errorKey, 'calls.errors.permission');
+      expect(h.cubit.state.errorKey, 'calls.toasts.mediaAccessFailed');
       expect(h.sent, isEmpty);
     });
 
@@ -282,7 +282,7 @@ void main() {
       });
 
       expect(h.cubit.state.phase, CallPhase.idle);
-      expect(h.cubit.state.errorKey, 'calls.errors.failed');
+      expect(h.cubit.state.errorKey, 'calls.toasts.genericError');
       expect(h.media.calls.last, 'close');
     });
   });

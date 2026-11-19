@@ -38,5 +38,11 @@ class FakeCallMedia implements CallMedia {
   void setCameraEnabled(bool enabled) => calls.add('camera:$enabled');
 
   @override
+  void switchCamera() => calls.add('switch-camera');
+
+  @override
+  void setSpeakerOn(bool enabled) => calls.add('speaker:$enabled');
+
+  @override
   Future<void> close() async => calls.add('close');
 }
