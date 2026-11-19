@@ -280,7 +280,11 @@
           "title": "Carica Avatar",
           "description": "Sei sicuro di voler usare questa immagine come avatar?",
           "upload": "Carica"
-        }
+        },
+        "tooBig": "L'immagine supera i 5 MB.",
+        "invalidType": "Usa un'immagine JPEG, PNG o WebP.",
+        "missingFile": "Scegli prima un'immagine.",
+        "storageUnavailable": "L'archiviazione degli avatar non è disponibile al momento."
       },
       "privacy": {
         "allow_add_by_email": {

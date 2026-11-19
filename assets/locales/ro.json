@@ -280,7 +280,11 @@
           "title": "Încărcare Avatar",
           "description": "Sigur doriți să folosiți această imagine ca avatar?",
           "upload": "Încarcă"
-        }
+        },
+        "tooBig": "Imaginea are mai mult de 5 MB.",
+        "invalidType": "Folosește o imagine JPEG, PNG sau WebP.",
+        "missingFile": "Alege mai întâi o imagine.",
+        "storageUnavailable": "Stocarea avatarului nu este disponibilă acum."
       },
       "privacy": {
         "allow_add_by_email": {

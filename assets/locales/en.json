@@ -280,7 +280,11 @@
           "title": "Upload Avatar",
           "description": "Are you sure you want to use this image as your avatar?",
           "upload": "Upload"
-        }
+        },
+        "tooBig": "The image is larger than 5 MB.",
+        "invalidType": "Use a JPEG, PNG or WebP image.",
+        "missingFile": "Choose an image first.",
+        "storageUnavailable": "Avatar storage is unavailable right now."
       },
       "privacy": {
         "allow_add_by_email": {

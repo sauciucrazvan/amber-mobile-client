@@ -280,7 +280,11 @@
           "title": "上传头像",
           "description": "您确定要将此图片用作您的头像吗？",
           "upload": "上传"
-        }
+        },
+        "tooBig": "图片超过 5 MB。",
+        "invalidType": "请使用 JPEG、PNG 或 WebP 图片。",
+        "missingFile": "请先选择图片。",
+        "storageUnavailable": "头像存储暂时不可用。"
       },
       "privacy": {
         "allow_add_by_email": {

@@ -280,7 +280,11 @@
           "title": "アバターのアップロード",
           "description": "本当にこの画像をアバターとして使用しますか？",
           "upload": "アップロード"
-        }
+        },
+        "tooBig": "画像が 5 MB を超えています。",
+        "invalidType": "JPEG、PNG、WebP の画像を使用してください。",
+        "missingFile": "先に画像を選択してください。",
+        "storageUnavailable": "アバターの保存先は現在利用できません。"
       },
       "privacy": {
         "allow_add_by_email": {

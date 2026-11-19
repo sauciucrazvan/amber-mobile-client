@@ -3,6 +3,7 @@ import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/account/data/account_api.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
 import 'package:amber_mobile_client/core/app_services.dart';
@@ -48,6 +49,13 @@ class AccountSettings extends StatelessWidget {
           onPressed: () => _changePassword(context),
         ),
         _PrivacyRow(account: account),
+        _AccountRow(
+          title: l10n.t('settings.account.avatar.confirm.title'),
+          description: l10n.t('settings.account.avatar.confirm.description'),
+          buttonKey: const ValueKey('account-avatar'),
+          buttonLabel: l10n.t('settings.account.avatar.confirm.upload'),
+          onPressed: () => _changeAvatar(context),
+        ),
         _AccountRow(
           title: l10n.t('settings.account.data.title'),
           description: l10n.t('settings.account.data.description'),
@@ -221,6 +229,44 @@ Future<void> _editBio(BuildContext context, Account account) async {
     context,
     () => _api(context).updateBio(bio),
     successKey: 'settings.account.bio.updated',
+  );
+}
+
+/// Picks an image, checks its type and size, confirms, then uploads it.
+Future<void> _changeAvatar(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  final picked = await FilePicker.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: avatarContentTypes.keys.toList(),
+  );
+  if (picked.isEmpty || !context.mounted) return;
+  final file = picked.first;
+  final contentType = avatarContentTypes[file.extension?.toLowerCase()];
+  if (contentType == null) {
+    _toast(context, 'settings.account.avatar.invalidType', error: true);
+    return;
+  }
+  final size = await file.length() ?? 0;
+  if (!context.mounted) return;
+  if (size > avatarMaxBytes) {
+    _toast(context, 'settings.account.avatar.tooBig', error: true);
+    return;
+  }
+  final confirmed = await showConfirmationDialog(
+    context,
+    title: l10n.t('settings.account.avatar.confirm.title'),
+    description: l10n.t('settings.account.avatar.confirm.description'),
+    confirmText: l10n.t('settings.account.avatar.confirm.upload'),
+  );
+  if (!confirmed || !context.mounted) return;
+  final bytes = await file.readAsBytes();
+  if (!context.mounted) return;
+  await _run(
+    context,
+    () => _api(
+      context,
+    ).uploadAvatar(bytes: bytes, filename: file.name, contentType: contentType),
+    successKey: 'settings.account.avatar.uploaded',
   );
 }
 

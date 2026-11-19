@@ -280,7 +280,11 @@
           "title": "Avatar hochladen",
           "description": "Sind Sie sicher, dass Sie dieses Bild als Avatar verwenden möchten?",
           "upload": "Hochladen"
-        }
+        },
+        "tooBig": "Das Bild ist größer als 5 MB.",
+        "invalidType": "Verwende ein JPEG-, PNG- oder WebP-Bild.",
+        "missingFile": "Wähle zuerst ein Bild aus.",
+        "storageUnavailable": "Der Avatar-Speicher ist gerade nicht verfügbar."
       },
       "privacy": {
         "allow_add_by_email": {
