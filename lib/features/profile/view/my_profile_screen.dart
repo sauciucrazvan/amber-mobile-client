@@ -43,6 +43,15 @@ class MyProfileScreen extends StatelessWidget {
     }
 
     return AmberPage(
+      footer: SizedBox(
+        width: double.infinity,
+        child: ShadButton.destructive(
+          key: const ValueKey('sign-out'),
+          leading: const Icon(LucideIcons.logOut, size: 16),
+          onPressed: () => confirmAndSignOut(context),
+          child: Text(l10n.t('settings.account.signOut.action')),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -62,14 +71,6 @@ class MyProfileScreen extends StatelessWidget {
             registeredAt: account.registeredAt,
             online: false,
             lastActiveAt: account.lastActiveAt,
-          ),
-          const SizedBox(height: 16),
-          ShadButton.destructive(
-            key: const ValueKey('sign-out'),
-            size: ShadButtonSize.sm,
-            leading: const Icon(LucideIcons.logOut, size: 14),
-            onPressed: () => confirmAndSignOut(context),
-            child: Text(l10n.t('settings.account.signOut.action')),
           ),
         ],
       ),
