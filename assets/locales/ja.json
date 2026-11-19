@@ -19,7 +19,8 @@
       "failed": "選択されたサーバーへの接続に失敗しました。"
     },
     "online": "オンライン",
-    "offline": "オフライン"
+    "offline": "オフライン",
+    "retry": "再試行"
   },
   "login": {
     "signIn": "ログイン",
@@ -54,7 +55,8 @@
         "next": "次へ",
         "finish": "完了",
         "back": "戻る"
-      }
+      },
+      "invalid_email": "メールアドレスが無効です"
     }
   },
   "register": {
@@ -431,7 +433,9 @@
         "love": "ラブラブ",
         "smile": "笑顔",
         "laugh": "爆笑"
-      }
+      },
+      "hint": "絵文字をタップして、リアクションを追加または削除します。",
+      "title": "リアクション"
     },
     "deleted_message": "メッセージを正常に削除しました。",
     "deleteMessage": {
@@ -452,7 +456,12 @@
       "no_relation": "このユーザーと友達ではないか、ブロックされています。"
     },
     "files": {
-      "attachment": "添付ファイル"
+      "attachment": "添付ファイル",
+      "attach": "ファイルを添付",
+      "empty": "このファイルは空です。",
+      "too_big": "ファイルは最大 15 MB です。",
+      "type_not_accepted": "このファイルの種類は送信できません。",
+      "save_failed": "ファイルを保存できませんでした。"
     }
   },
   "calls": {
@@ -470,7 +479,10 @@
       "rejected": "拒否",
       "missed": "不在着信",
       "failed": "失敗",
-      "ended": "終了"
+      "ended": "終了",
+      "answeredElsewhere": "別のデバイスで応答しました",
+      "canceled": "キャンセルしました",
+      "connecting": "接続中..."
     },
     "outgoing": {
       "waiting": "呼び出し中"

@@ -460,7 +460,8 @@
       "attach": "Attach a file",
       "type_not_accepted": "This file type can't be sent.",
       "too_big": "Files can be up to 15 MB.",
-      "empty": "This file is empty."
+      "empty": "This file is empty.",
+      "save_failed": "Could not save the file."
     }
   },
   "calls": {

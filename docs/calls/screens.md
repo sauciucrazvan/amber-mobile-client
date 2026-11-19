@@ -24,6 +24,8 @@ The chat header has an audio button and a video button, after the contact's name
 
 For a video call that is connected and has the peer's camera on, the peer's video fills the screen, and our camera shows in a small preview in the top-right corner.
 
+Signing out ends a call on this device, since the socket that would carry the end is gone.
+
 Problems, such as a refused microphone or the server refusing a call, show as a toast through `calls.toasts.*`, and the call returns to idle.
 
 ## Strings
