@@ -325,7 +325,21 @@
         "downloading": "Se descarcă",
         "downloaded": "Pregătit pentru instalare",
         "error": "Eroare"
-      }
+      },
+      "version": "Versiune",
+      "project": "Proiect"
+    },
+    "devices": {
+      "options": {
+        "front": "Frontală",
+        "back": "Spate",
+        "speaker": "Difuzor",
+        "earpiece": "Receptor"
+      },
+      "microphoneDefault": "Se folosește microfonul implicit al telefonului."
+    },
+    "legal": {
+      "title": "Juridic"
     }
   },
   "contacts": {
@@ -383,7 +397,9 @@
       "description": "Gestionați contactele pe care le-ați blocat.",
       "none": "Nu aveți contacte blocate",
       "success": "{{user}} a fost blocat cu succes."
-    }
+    },
+    "search_placeholder": "Caută contacte",
+    "no_results": "Niciun contact nu corespunde căutării."
   },
   "account": {
     "verify": {

@@ -325,7 +325,21 @@
         "downloading": "ダウンロード中",
         "downloaded": "インストールの準備完了",
         "error": "エラー"
-      }
+      },
+      "version": "バージョン",
+      "project": "プロジェクト"
+    },
+    "devices": {
+      "options": {
+        "front": "フロント",
+        "back": "リア",
+        "speaker": "スピーカー",
+        "earpiece": "イヤピース"
+      },
+      "microphoneDefault": "端末の標準のマイクを使用します。"
+    },
+    "legal": {
+      "title": "法的情報"
     }
   },
   "contacts": {
@@ -383,7 +397,9 @@
       "description": "ブロックした連絡先を管理します。",
       "none": "ブロックした連絡先はありません",
       "success": "{{user}} を正常にブロックしました。"
-    }
+    },
+    "search_placeholder": "連絡先を検索",
+    "no_results": "検索に一致する連絡先はありません。"
   },
   "account": {
     "verify": {

@@ -8,6 +8,7 @@ import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.da
 import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/profile/view/my_profile_screen.dart';
+import 'package:amber_mobile_client/features/settings/view/settings_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
@@ -80,6 +81,15 @@ class _HomeViewState extends State<_HomeView> {
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => const BlockedAccountsScreen(),
+                  ),
+                ),
+              ),
+              ShadIconButton.ghost(
+                key: const ValueKey('open-settings'),
+                icon: const Icon(LucideIcons.settings),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SettingsScreen(),
                   ),
                 ),
               ),

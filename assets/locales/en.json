@@ -325,7 +325,21 @@
         "downloading": "Downloading",
         "downloaded": "Ready to install",
         "error": "Error"
-      }
+      },
+      "version": "Version",
+      "project": "Project"
+    },
+    "devices": {
+      "options": {
+        "front": "Front",
+        "back": "Back",
+        "speaker": "Speaker",
+        "earpiece": "Earpiece"
+      },
+      "microphoneDefault": "Your phone's default microphone is used."
+    },
+    "legal": {
+      "title": "Legal"
     }
   },
   "contacts": {
