@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/network/api_client.dart';
+import 'package:amber_mobile_client/core/session/session_store.dart';
+import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/auth/data/auth_api.dart';
 import 'package:amber_mobile_client/features/calls/bloc/call_cubit.dart';
 import 'package:amber_mobile_client/features/calls/data/call_models.dart';
 import 'package:amber_mobile_client/features/calls/data/call_signaling.dart';
@@ -11,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../../../support/memory_key_value_storage.dart';
 import '../support/fake_call_media.dart';
 
 class _Harness {
@@ -52,18 +57,29 @@ Future<void> _pump(WidgetTester tester, _Harness h) async {
   final localizations = (await tester.runAsync(
     () => AppLocalizations.load('en'),
   ))!;
+  final client = ApiClient(sessionStore: SessionStore(MemoryKeyValueStorage()));
+  final auth = AuthCubit(
+    api: AuthApi(client),
+    client: client,
+    connectRealtime: () async {},
+    disconnectRealtime: () async {},
+  );
+  addTearDown(auth.close);
   await tester.pumpWidget(
     AppLocalizationsScope(
       localizations: localizations,
       child: RepositoryProvider<FlutterCallMedia>.value(
         value: FlutterCallMedia(),
-        child: BlocProvider<CallCubit>.value(
-          value: h.cubit,
-          child: ShadApp.custom(
-            appBuilder: (_) => MaterialApp(
-              builder: (context, child) =>
-                  ShadToaster(child: CallOverlay(child: child!)),
-              home: const Scaffold(body: Text('home')),
+        child: BlocProvider<AuthCubit>.value(
+          value: auth,
+          child: BlocProvider<CallCubit>.value(
+            value: h.cubit,
+            child: ShadApp.custom(
+              appBuilder: (_) => MaterialApp(
+                builder: (context, child) =>
+                    ShadToaster(child: CallOverlay(child: child!)),
+                home: const Scaffold(body: Text('home')),
+              ),
             ),
           ),
         ),

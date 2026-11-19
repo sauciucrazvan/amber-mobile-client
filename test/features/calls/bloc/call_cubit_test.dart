@@ -287,6 +287,20 @@ void main() {
     });
   });
 
+  test('reset drops the call locally and sends nothing', () async {
+    final h = _Harness();
+    addTearDown(h.dispose);
+    await h.receive(_ringing());
+    await h.cubit.acceptCall();
+    final sentBefore = h.sent.length;
+
+    await h.cubit.reset();
+
+    expect(h.cubit.state.phase, CallPhase.idle);
+    expect(h.sent.length, sentBefore);
+    expect(h.media.calls.last, 'close');
+  });
+
   test('a stray end for a call we are not in is ignored', () async {
     final h = _Harness();
     addTearDown(h.dispose);

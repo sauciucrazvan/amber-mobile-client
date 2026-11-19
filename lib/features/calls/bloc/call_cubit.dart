@@ -121,6 +121,14 @@ class CallCubit extends Cubit<CallState> {
     emit(state.copyWith(cameraOn: cameraOn));
   }
 
+  /// Drops the call on this device without telling the server. Used when the
+  /// user signs out, since the socket that would carry the end is gone.
+  Future<void> reset() async {
+    _summaryTimer?.cancel();
+    await media.close();
+    emit(const CallState());
+  }
+
   /// Clears the error, so the UI can show it once.
   void clearError() {
     if (state.errorKey != null) emit(const CallState());
