@@ -22,7 +22,7 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - Contact avatars show a green dot when online and a red dot when offline, as on the desktop.
 - Dialogs use `AmberDialog`: rounded corners (8px) on every screen size, and left-aligned title and text.
 - Dialogs sit 16px in from the screen edges, with 16px between their parts and 8px between buttons.
-- The chat composer's send button sits inside the message field's border, as on the desktop's joined input. The attachment button sits to its left.
+- The chat composer has the attachment button on the left, the message field, and an outline send button on the right, as on the desktop.
 - Loading bars are 2px tall.
 - Profiles open as full pages (`AmberPage`) with a back button, using the same layout as the desktop's profile dialog.
 - The Chats tab uses the `messageCircle` icon, as on the desktop.
