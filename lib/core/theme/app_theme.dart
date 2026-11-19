@@ -8,6 +8,9 @@ abstract final class AppColors {
 
   /// Presence dot for an offline contact (`bg-red-500`).
   static const offline = Color(0xFFEF4444);
+
+  /// The logo's orange. Used only for the add-contact button.
+  static const brand = Color(0xFFFF9831);
 }
 
 /// Light and dark themes that match the desktop client.
@@ -57,8 +60,8 @@ abstract final class AppTheme {
     cardForeground: Color(0xFF0A0A0A),
     popover: Color(0xFFFFFFFF),
     popoverForeground: Color(0xFF0A0A0A),
-    primary: Color(0xFFFF9831),
-    primaryForeground: Color(0xFF171717),
+    primary: Color(0xFF171717),
+    primaryForeground: Color(0xFFFAFAFA),
     secondary: Color(0xFFF5F5F5),
     secondaryForeground: Color(0xFF171717),
     muted: Color(0xFFF5F5F5),
@@ -80,7 +83,7 @@ abstract final class AppTheme {
     cardForeground: Color(0xFFFAFAFA),
     popover: Color(0xFF171717),
     popoverForeground: Color(0xFFFAFAFA),
-    primary: Color(0xFFFF9831),
+    primary: Color(0xFFE5E5E5),
     primaryForeground: Color(0xFF171717),
     secondary: Color(0xFF262626),
     secondaryForeground: Color(0xFFFAFAFA),
