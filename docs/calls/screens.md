@@ -36,7 +36,7 @@ All text comes from the desktop's `calls` keys. Added for mobile: `calls.status.
 
 Sources: `lib/features/calls/view/call_history_tab.dart`, `lib/features/calls/bloc/call_history_cubit.dart`, `lib/features/calls/data/call_history.dart`
 
-The calls tab sits in the bottom bar, between Chats and Inbox. Each row shows the contact's avatar and name, why the call ended (or its status), when it was, and its length as `mm:ss`. Missed, failed, rejected and timed-out calls show in red, as on the desktop.
+Calls is the second section of the Inbox tab, next to Requests. Each row shows the contact's avatar and name, why the call ended (or its status), when it was, and its length as `mm:ss`. Missed, failed, rejected and timed-out calls show in red, as on the desktop.
 
 - The list loads `GET /calls/v1/history` in pages of 50. Scrolling near the end loads the next page.
 - It refreshes every 30 seconds, and one second after a call ends, so the new entry appears without a restart.

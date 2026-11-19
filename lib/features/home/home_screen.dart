@@ -4,7 +4,6 @@ import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/calls/bloc/call_history_cubit.dart';
 import 'package:amber_mobile_client/features/calls/data/call_history.dart';
-import 'package:amber_mobile_client/features/calls/view/call_history_tab.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.dart';
@@ -15,8 +14,8 @@ import 'package:amber_mobile_client/features/settings/view/settings_screen.dart'
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
 import 'package:amber_mobile_client/features/home/realtime_status_bar.dart';
-import 'package:amber_mobile_client/features/contacts/view/requests_list.dart';
-import 'package:amber_mobile_client/core/ui/fade_stack.dart';
+import 'package:amber_mobile_client/features/home/inbox_page.dart';
+import 'package:amber_mobile_client/core/ui/page_keep_alive.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -52,7 +51,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 /// The bottom bar, left to right. Chats is the default.
-enum _HomeTab { inbox, chats, calls, settings }
+enum _HomeTab { inbox, chats, settings }
 
 class _HomeView extends StatefulWidget {
   const _HomeView();
@@ -63,6 +62,23 @@ class _HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<_HomeView> {
   _HomeTab _tab = _HomeTab.chats;
+  late final _pages = PageController(initialPage: _tab.index);
+
+  @override
+  void dispose() {
+    _pages.dispose();
+    super.dispose();
+  }
+
+  /// Taps on the bottom bar slide to the tab, the same as a swipe.
+  void _selectTab(_HomeTab tab) {
+    setState(() => _tab = tab);
+    _pages.animateToPage(
+      tab.index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +100,6 @@ class _HomeViewState extends State<_HomeView> {
                 child: Text(switch (_tab) {
                   _HomeTab.inbox => l10n.t('contacts.requests.title'),
                   _HomeTab.chats => l10n.t('contacts.title'),
-                  _HomeTab.calls => l10n.t('calls.history.title'),
                   _HomeTab.settings => l10n.t('settings.title'),
                 }, style: theme.textTheme.h3),
               ),
@@ -95,19 +110,23 @@ class _HomeViewState extends State<_HomeView> {
         Expanded(
           child: Stack(
             children: [
-              FadeStack(
-                index: _tab.index,
+              // Swipe left or right to change tabs, in the bottom bar's order.
+              PageView(
+                controller: _pages,
+                onPageChanged: (index) =>
+                    setState(() => _tab = _HomeTab.values[index]),
                 children: [
-                  const RequestsList(),
-                  ContactsList(
-                    onOpen: (contact) => showConversation(
-                      context,
-                      contact.user,
-                      context.read<ContactsCubit>(),
+                  const PageKeepAlive(child: InboxPage()),
+                  PageKeepAlive(
+                    child: ContactsList(
+                      onOpen: (contact) => showConversation(
+                        context,
+                        contact.user,
+                        context.read<ContactsCubit>(),
+                      ),
                     ),
                   ),
-                  const CallHistoryTab(),
-                  const SettingsScreen(),
+                  const PageKeepAlive(child: SettingsScreen()),
                 ],
               ),
               // The add button floats over the contacts, bottom right, as on
@@ -134,7 +153,7 @@ class _HomeViewState extends State<_HomeView> {
         _BottomBar(
           selected: _tab,
           requestCount: requestCount,
-          onSelected: (tab) => setState(() => _tab = tab),
+          onSelected: _selectTab,
         ),
       ],
     );
@@ -184,15 +203,6 @@ class _BottomBar extends StatelessWidget {
                 label: l10n.t('contacts.title'),
                 selected: selected == _HomeTab.chats,
                 onPressed: () => onSelected(_HomeTab.chats),
-              ),
-            ),
-            Expanded(
-              child: _NavItem(
-                key: const ValueKey('nav-calls'),
-                icon: LucideIcons.phone,
-                label: l10n.t('calls.history.title'),
-                selected: selected == _HomeTab.calls,
-                onPressed: () => onSelected(_HomeTab.calls),
               ),
             ),
             Expanded(

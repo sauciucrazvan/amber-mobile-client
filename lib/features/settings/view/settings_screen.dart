@@ -19,8 +19,6 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = ShadTheme.of(context);
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Align(
@@ -30,8 +28,6 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.t('settings.title'), style: theme.textTheme.h3),
-              const SizedBox(height: 16),
               _Section(
                 title: l10n.t('settings.tabs.appearance'),
                 children: const [_ThemeRow(), _FontScaleRow()],
