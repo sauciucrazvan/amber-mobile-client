@@ -7,7 +7,7 @@ The Settings tab lists four categories, as on the desktop. Each opens its own pa
 | Category | Page | What it holds |
 |----------|------|---------------|
 | General | `GeneralPage` | Appearance (dark theme, font scale) and Language |
-| Account | `AccountPage` | Your avatar (tap it to change), Account details (name, bio, email), Security (password), Privacy, Blocked contacts, Your data, Danger zone (delete) |
+| Account | `AccountPage` | Your avatar (tap it to change), Account details (name, email, bio), Security (password), Privacy (privacy switch, blocked contacts, request your data), Danger zone (delete) |
 | Devices | `DevicesPage` | Camera, speaker, and a note about the microphone |
 | About | `AboutPage` | Version, and Legal (Terms and Privacy) |
 
@@ -19,17 +19,17 @@ The Settings tab lists four categories, as on the desktop. Each opens its own pa
 
 ## Account
 
-The avatar at the top changes the picture: pick a JPEG, PNG or WebP image up to 5 MB, confirm, and upload. Each setting saves to the server:
+The avatar at the top changes the picture: pick a JPEG, PNG or WebP image up to 5 MB, confirm, and upload. The bio shows in the same box as on the profile. Each setting saves to the server:
 
 | Setting | Saves with | Notes |
 |---------|-----------|-------|
 | Name | `PATCH /account/v1/modify/fullname` | The server allows one change a week. |
-| Bio | `PATCH /account/v1/modify/bio` | Up to 256 characters, checked before sending. |
+| Bio | `PATCH /account/v1/modify/bio` | Up to 256 characters, checked before sending. Shown in the profile box. |
 | Email | `POST /account/v1/modify/email/request`, `/confirm`, `/verify` | A three-step dialog. The confirm step appears only when the server asks for the current email's code. |
 | Password | `PATCH /account/v1/modify/password` | Checks the confirmation matches. On success the app signs out, because the server rotates the session. |
 | Let people find you | `PATCH /account/v1/settings/privacy` | The `allow_add_by_email` switch. A setting the server does not send counts as on. |
-| Blocked contacts | Opens the blocked list | |
-| Your data | `POST /account/v1/request/data` | Sent by email, one request a week. |
+| Blocked contacts | Opens the blocked list | Under Privacy. |
+| Request your data | `POST /account/v1/request/data` | Under Privacy. Sent by email, one request a week. |
 | Delete account | `DELETE /account/v1/delete` | Asks for the password, then confirms once more. On success the session is cleared and the app returns to sign-in. Device settings stay. |
 
 Sign-out is still in My Profile.

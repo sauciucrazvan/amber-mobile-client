@@ -55,7 +55,13 @@ class SettingsRow extends StatelessWidget {
               children: [
                 Text(title, style: theme.textTheme.small),
                 if (description != null)
-                  Text(description!, style: theme.textTheme.muted),
+                  Text(
+                    description!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.mutedForeground,
+                    ),
+                  ),
               ],
             ),
           ),
