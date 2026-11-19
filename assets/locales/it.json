@@ -398,7 +398,8 @@
       "success": "{{user}} bloccato con successo."
     },
     "search_placeholder": "Cerca contatti",
-    "no_results": "Nessun contatto corrisponde alla ricerca."
+    "no_results": "Nessun contatto corrisponde alla ricerca.",
+    "inbox": "In arrivo"
   },
   "account": {
     "verify": {

@@ -398,7 +398,8 @@
       "description": "Manage the contacts you've blocked.",
       "none": "No blocked contacts",
       "success": "Successfully blocked {{user}}."
-    }
+    },
+    "inbox": "Inbox"
   },
   "account": {
     "verify": {

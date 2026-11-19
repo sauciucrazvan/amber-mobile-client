@@ -398,7 +398,8 @@
       "success": "{{user}} を正常にブロックしました。"
     },
     "search_placeholder": "連絡先を検索",
-    "no_results": "検索に一致する連絡先はありません。"
+    "no_results": "検索に一致する連絡先はありません。",
+    "inbox": "受信トレイ"
   },
   "account": {
     "verify": {

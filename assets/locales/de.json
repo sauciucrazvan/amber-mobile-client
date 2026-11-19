@@ -398,7 +398,8 @@
       "success": "{{user}} wurde erfolgreich blockiert."
     },
     "search_placeholder": "Kontakte suchen",
-    "no_results": "Keine Kontakte entsprechen deiner Suche."
+    "no_results": "Keine Kontakte entsprechen deiner Suche.",
+    "inbox": "Posteingang"
   },
   "account": {
     "verify": {

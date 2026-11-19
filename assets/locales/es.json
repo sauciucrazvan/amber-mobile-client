@@ -398,7 +398,8 @@
       "success": "{{user}} ha sido bloqueado correctamente."
     },
     "search_placeholder": "Buscar contactos",
-    "no_results": "Ningún contacto coincide con la búsqueda."
+    "no_results": "Ningún contacto coincide con la búsqueda.",
+    "inbox": "Bandeja de entrada"
   },
   "account": {
     "verify": {

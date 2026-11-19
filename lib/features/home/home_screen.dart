@@ -98,7 +98,7 @@ class _HomeViewState extends State<_HomeView> {
             children: [
               Expanded(
                 child: Text(switch (_tab) {
-                  _HomeTab.inbox => l10n.t('contacts.requests.title'),
+                  _HomeTab.inbox => l10n.t('contacts.inbox'),
                   _HomeTab.chats => l10n.t('contacts.title'),
                   _HomeTab.settings => l10n.t('settings.title'),
                 }, style: theme.textTheme.h3),
@@ -190,7 +190,7 @@ class _BottomBar extends StatelessWidget {
               child: _NavItem(
                 key: const ValueKey('nav-inbox'),
                 icon: LucideIcons.inbox,
-                label: l10n.t('contacts.requests.title'),
+                label: l10n.t('contacts.inbox'),
                 selected: selected == _HomeTab.inbox,
                 badge: requestCount,
                 onPressed: () => onSelected(_HomeTab.inbox),
