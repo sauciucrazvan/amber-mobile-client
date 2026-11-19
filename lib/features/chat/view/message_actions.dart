@@ -34,6 +34,9 @@ Future<MessageAction?> showMessageActions(
               children: [
                 for (final emoji in quickReactions)
                   ShadButton.ghost(
+                    width: 44,
+                    height: 44,
+                    padding: EdgeInsets.zero,
                     onPressed: () {
                       Navigator.of(sheetContext).pop();
                       onReact(emoji);
@@ -45,6 +48,9 @@ Future<MessageAction?> showMessageActions(
                   message: l10n.t('conversations.reactions.more'),
                   child: ShadIconButton.ghost(
                     key: const ValueKey('more-reactions'),
+                    width: 44,
+                    height: 44,
+                    padding: EdgeInsets.zero,
                     icon: const Icon(LucideIcons.chevronRight),
                     onPressed: () =>
                         Navigator.of(sheetContext)
