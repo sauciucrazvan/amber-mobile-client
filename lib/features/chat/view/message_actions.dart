@@ -3,7 +3,7 @@ import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-enum MessageAction { reply, moreReactions, edit, delete }
+enum MessageAction { reply, moreReactions, edit, saveAs, delete }
 
 /// Quick reactions, in the desktop's order: like, love, smile, laugh.
 const quickReactions = ['👍', '❤️', '😊', '😂'];
@@ -59,6 +59,13 @@ Future<MessageAction?> showMessageActions(
                   Navigator.of(sheetContext).pop(MessageAction.reply),
               child: Text(l10n.t('conversations.actions.reply')),
             ),
+            if (message.type == 'file')
+              ShadButton.ghost(
+                key: const ValueKey('save-as'),
+                onPressed: () =>
+                    Navigator.of(sheetContext).pop(MessageAction.saveAs),
+                child: Text(l10n.t('conversations.actions.save_as')),
+              ),
             if (isMine && message.type == 'text')
               ShadButton.ghost(
                 onPressed: () =>

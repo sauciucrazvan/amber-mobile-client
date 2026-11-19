@@ -35,6 +35,25 @@ Map<String, Object?> _message(String id, int seq, int sender, String text) => {
   'seen': false,
 };
 
+/// A file message from Bob, to check the file-only actions.
+Map<String, Object?> _fileMessage(String id, int seq, int sender) => {
+  'id': id,
+  'conversation_id': 'c-1',
+  'sender_id': sender,
+  'seq': seq,
+  'type': 'file',
+  'content': {
+    'url': 'https://files.example/notes.txt',
+    'filename': 'notes.txt',
+    'content_type': 'text/plain',
+    'size': 12,
+  },
+  'reaction_details': [],
+  'created_at': '2026-11-18T1$seq:00:00+00:00',
+  'edited_at': null,
+  'seen': false,
+};
+
 /// Records every chat request so the tests can check the calls made.
 FakeHttpHandler _backend(List<RequestOptions> calls) {
   return (options) {
@@ -71,6 +90,7 @@ FakeHttpHandler _backend(List<RequestOptions> calls) {
       return jsonResponse([
         _message('m-1', 1, 2, 'hello there'),
         _message('m-2', 2, 1, 'hi Bob'),
+        _fileMessage('m-4', 3, 2),
       ], 200);
     }
     if (path.endsWith('/reply')) {
@@ -119,6 +139,21 @@ void main() {
     final fields = Map.fromEntries((reply.data as FormData).fields);
     expect(fields['message_id'], 'm-1');
     expect(fields['text'], 'agreed');
+  });
+
+  testWidgets('Save as is offered on file messages only', (tester) async {
+    final calls = <RequestOptions>[];
+    await _openChat(tester, calls);
+
+    await tester.longPress(find.text('hello there'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('save-as')), findsNothing);
+    await tester.tapAt(const Offset(1, 1));
+    await tester.pumpAndSettle();
+
+    await tester.longPress(find.text('notes.txt'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('save-as')), findsOneWidget);
   });
 
   testWidgets('deleting asks first, then sends the delete', (tester) async {

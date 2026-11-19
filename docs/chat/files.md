@@ -16,14 +16,14 @@ Attachments are disabled while editing, because an edit changes only the text.
 ## Showing a file
 
 - **Images** (`image/*`) show a preview in the bubble. Tapping opens `ImagePreviewScreen`, a full-screen view you can pinch to zoom. A failed load falls back to the file row.
-- **Other files** show an icon, the file name and the size (`512 B`, `240 KB` or `3.2 MB`).
+- **Other files** show an icon, the file name and the size (`512 B`, `240 KB` or `3.2 MB`). Tapping opens the file in the browser.
+- **Save as:** long-press a file message and choose Save as. The file downloads, then the system save dialog asks where to keep it. Cancelling the dialog saves nothing, and a failed download shows `conversations.files.save_failed`.
 - A caption, if any, appears below the attachment.
 
 Images load through Flutter's in-memory image cache. A disk cache is a later step.
 
 ## Not in this step
 
-- Opening non-image files. Tapping them does nothing yet, because opening needs a URL launcher or a download step.
 - Sending several files at once. The picker allows one file per send.
 - Showing a file's type or dimensions.
 
