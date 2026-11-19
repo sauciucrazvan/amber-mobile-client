@@ -109,7 +109,10 @@ void main() {
     await _tap(tester, find.text('Accept'));
     expect(find.text("You're now friends with dan."), findsOneWidget);
 
-    await _tap(tester, find.text('Chats').last);
+    // The success toast sits over the bottom bar until it closes.
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pumpAndSettle();
+    await _tap(tester, find.byKey(const ValueKey('nav-chats')));
     expect(find.text('Dan'), findsOneWidget);
   });
 

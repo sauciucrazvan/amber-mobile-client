@@ -12,7 +12,6 @@ import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/profile/view/my_profile_screen.dart';
 import 'package:amber_mobile_client/features/settings/view/settings_screen.dart';
-import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
 import 'package:amber_mobile_client/features/home/realtime_status_bar.dart';
@@ -51,7 +50,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-enum _HomeTab { chats, inbox, calls }
+/// The bottom bar, left to right. Chats is the default.
+enum _HomeTab { inbox, chats, calls, settings }
 
 class _HomeView extends StatefulWidget {
   const _HomeView();
@@ -81,28 +81,11 @@ class _HomeViewState extends State<_HomeView> {
             children: [
               Expanded(
                 child: Text(switch (_tab) {
-                  _HomeTab.chats => l10n.t('contacts.title'),
                   _HomeTab.inbox => l10n.t('contacts.requests.title'),
+                  _HomeTab.chats => l10n.t('contacts.title'),
                   _HomeTab.calls => l10n.t('calls.history.title'),
+                  _HomeTab.settings => l10n.t('settings.title'),
                 }, style: theme.textTheme.h3),
-              ),
-              ShadIconButton.ghost(
-                key: const ValueKey('blocked-accounts'),
-                icon: const Icon(LucideIcons.ban),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const BlockedAccountsScreen(),
-                  ),
-                ),
-              ),
-              ShadIconButton.ghost(
-                key: const ValueKey('open-settings'),
-                icon: const Icon(LucideIcons.settings),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const SettingsScreen(),
-                  ),
-                ),
               ),
               _MyProfileButton(onPressed: () => showMyProfile(context)),
             ],
@@ -114,6 +97,7 @@ class _HomeViewState extends State<_HomeView> {
               IndexedStack(
                 index: _tab.index,
                 children: [
+                  const RequestsList(),
                   ContactsList(
                     onOpen: (contact) => showConversation(
                       context,
@@ -121,8 +105,8 @@ class _HomeViewState extends State<_HomeView> {
                       context.read<ContactsCubit>(),
                     ),
                   ),
-                  const RequestsList(),
                   const CallHistoryTab(),
+                  const SettingsScreen(),
                 ],
               ),
               // The add button floats over the contacts, bottom right, as on
@@ -184,6 +168,16 @@ class _BottomBar extends StatelessWidget {
           children: [
             Expanded(
               child: _NavItem(
+                key: const ValueKey('nav-inbox'),
+                icon: LucideIcons.inbox,
+                label: l10n.t('contacts.requests.title'),
+                selected: selected == _HomeTab.inbox,
+                badge: requestCount,
+                onPressed: () => onSelected(_HomeTab.inbox),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
                 key: const ValueKey('nav-chats'),
                 icon: LucideIcons.messageCircle,
                 label: l10n.t('contacts.title'),
@@ -202,12 +196,11 @@ class _BottomBar extends StatelessWidget {
             ),
             Expanded(
               child: _NavItem(
-                key: const ValueKey('nav-inbox'),
-                icon: LucideIcons.inbox,
-                label: l10n.t('contacts.requests.title'),
-                selected: selected == _HomeTab.inbox,
-                badge: requestCount,
-                onPressed: () => onSelected(_HomeTab.inbox),
+                key: const ValueKey('nav-settings'),
+                icon: LucideIcons.settings,
+                label: l10n.t('settings.title'),
+                selected: selected == _HomeTab.settings,
+                onPressed: () => onSelected(_HomeTab.settings),
               ),
             ),
           ],

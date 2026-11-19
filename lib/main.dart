@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:amber_mobile_client/app.dart';
 import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/bloc/app_bloc_observer.dart';
-import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/l10n/language_cubit.dart';
 import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/core/realtime/realtime_client.dart';
 import 'package:amber_mobile_client/core/session/key_value_storage.dart';
@@ -20,8 +20,7 @@ Future<void> main() async {
   final preferredTags = PlatformDispatcher.instance.locales.map(
     (locale) => locale.toLanguageTag(),
   );
-  final localeCode = resolveLocaleCode(preferredTags);
-  final localizations = await AppLocalizations.load(localeCode);
+  final localizations = await LanguageCubit.loadStartup(preferredTags);
 
   final sessionStore = SessionStore(const SecureKeyValueStorage());
   final apiClient = ApiClient(sessionStore: sessionStore);

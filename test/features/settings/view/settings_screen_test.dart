@@ -60,7 +60,7 @@ void main() {
     await tester.runAsync(() => cubit.login('ana', 'Secret123'));
     await settleRequests(tester);
 
-    await tester.tap(find.byKey(const ValueKey('open-settings')));
+    await tester.tap(find.byKey(const ValueKey('nav-settings')));
     await settleRequests(tester);
 
     expect(find.byType(SettingsScreen), findsOneWidget);
@@ -77,7 +77,7 @@ void main() {
     final cubit = await pumpAuthApp(tester, _backend());
     await tester.runAsync(() => cubit.login('ana', 'Secret123'));
     await settleRequests(tester);
-    await tester.tap(find.byKey(const ValueKey('open-settings')));
+    await tester.tap(find.byKey(const ValueKey('nav-settings')));
     await settleRequests(tester);
 
     final appearance = tester

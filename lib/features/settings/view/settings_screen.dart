@@ -1,17 +1,14 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/theme/appearance_cubit.dart';
-import 'package:amber_mobile_client/core/ui/amber_page.dart';
+import 'package:amber_mobile_client/core/l10n/language_cubit.dart';
 import 'package:amber_mobile_client/features/auth/view/legal_dialog.dart';
 import 'package:amber_mobile_client/features/calls/bloc/call_devices_cubit.dart';
 import 'package:amber_mobile_client/features/calls/data/call_devices.dart';
+import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/settings/data/app_info.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-/// The project page, shown in About.
-const projectUrl = 'https://github.com/sauciucrazvan/amber-mobile-client';
 
 /// Local settings: appearance, call devices, about and legal. Changes apply
 /// at once and stay on this device. Account settings are elsewhere.
@@ -23,29 +20,48 @@ class SettingsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = ShadTheme.of(context);
 
-    return AmberPage(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.t('settings.title'), style: theme.textTheme.h3),
-          const SizedBox(height: 16),
-          _Section(
-            title: l10n.t('settings.tabs.appearance'),
-            children: const [_ThemeRow(), _FontScaleRow()],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 425),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.t('settings.title'), style: theme.textTheme.h3),
+              const SizedBox(height: 16),
+              _Section(
+                title: l10n.t('settings.tabs.appearance'),
+                children: const [_ThemeRow(), _FontScaleRow()],
+              ),
+              _Section(
+                title: l10n.t('settings.general.language.title'),
+                children: const [_LanguageRow()],
+              ),
+              _Section(
+                title: l10n.t('settings.tabs.devices'),
+                children: const [
+                  _CameraRow(),
+                  _AudioOutputRow(),
+                  _MicrophoneRow(),
+                ],
+              ),
+              _Section(
+                title: l10n.t('contacts.blocked.title'),
+                children: const [_BlockedRow()],
+              ),
+              _Section(
+                title: l10n.t('settings.tabs.about'),
+                children: const [_VersionRow()],
+              ),
+              _Section(
+                title: l10n.t('settings.legal.title'),
+                children: const [_LegalRow()],
+              ),
+            ],
           ),
-          _Section(
-            title: l10n.t('settings.tabs.devices'),
-            children: const [_CameraRow(), _AudioOutputRow(), _MicrophoneRow()],
-          ),
-          _Section(
-            title: l10n.t('settings.tabs.about'),
-            children: const [_VersionRow(), _ProjectRow()],
-          ),
-          _Section(
-            title: l10n.t('settings.legal.title'),
-            children: const [_LegalRow()],
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -269,22 +285,56 @@ class _VersionRow extends StatelessWidget {
   }
 }
 
-class _ProjectRow extends StatelessWidget {
-  const _ProjectRow();
+class _LanguageRow extends StatelessWidget {
+  const _LanguageRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final code = context.select(
+      (LanguageCubit cubit) => cubit.state.localeCode,
+    );
+    return _Row(
+      title: l10n.t('settings.general.language.title'),
+      description: l10n.t('settings.general.language.description'),
+      control: ShadSelect<String>(
+        key: const ValueKey('language'),
+        initialValue: code,
+        options: [
+          for (final entry in languageNames.entries)
+            ShadOption(value: entry.key, child: Text(entry.value)),
+        ],
+        selectedOptionBuilder: (_, value) =>
+            Text(languageNames[value] ?? value),
+        onChanged: (value) {
+          if (value != null) {
+            context.read<LanguageCubit>().setLanguage(value);
+          }
+        },
+      ),
+    );
+  }
+}
+
+/// The blocked-accounts list, which used to sit in the chats header.
+class _BlockedRow extends StatelessWidget {
+  const _BlockedRow();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return _Row(
-      title: l10n.t('settings.about.project'),
+      title: l10n.t('contacts.blocked.title'),
+      description: l10n.t('contacts.blocked.description'),
       control: ShadButton.outline(
-        key: const ValueKey('open-project'),
+        key: const ValueKey('open-blocked'),
         size: ShadButtonSize.sm,
-        onPressed: () => launchUrl(
-          Uri.parse(projectUrl),
-          mode: LaunchMode.externalApplication,
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const BlockedAccountsScreen(),
+          ),
         ),
-        child: const Text('GitHub'),
+        child: Text(l10n.t('contacts.blocked.trigger')),
       ),
     );
   }

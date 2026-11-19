@@ -6,8 +6,8 @@ Sources: `lib/features/home/home_screen.dart`, `lib/features/contacts/view/`
 
 `AuthGate` shows `HomeScreen` once the user is signed in and verified. It creates the `ContactsCubit` from `AppServices` (API client and realtime events) and loads it.
 
-- Header: the current tab's title, a blocked-accounts button, and your avatar (opens your profile). Sign-out lives in the profile.
-- Bottom bar: **Chats** (contacts) and **Inbox** (requests), built from shadcn buttons. The Inbox button shows a badge with the number of pending requests.
+- Header: the current tab's title and your avatar (opens your profile). Sign-out lives in the profile.
+- Bottom bar, left to right: **Inbox** (requests, with a badge for the pending count), **Chats** (the default), and **Settings**. Blocked accounts are in Settings.
 - The add-contact button floats in the bottom-right corner of the Chats tab, round and in the primary colour.
 - The tab bodies sit in an `IndexedStack`, so each list keeps its scroll position.
 
