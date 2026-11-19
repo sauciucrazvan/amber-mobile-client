@@ -1,6 +1,5 @@
 import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
-import 'package:amber_mobile_client/core/ui/amber_logo.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
@@ -66,8 +65,6 @@ class _HomeViewState extends State<_HomeView> {
           padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
           child: Row(
             children: [
-              const AmberLogo(size: 24),
-              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   _tab == _HomeTab.chats
