@@ -91,7 +91,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('sign-out')));
     await tester.pumpAndSettle();
-    expect(find.byType(ShadDialog), findsNWidgets(2));
+    expect(find.byType(ShadDialog), findsOneWidget);
 
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();

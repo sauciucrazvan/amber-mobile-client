@@ -3,6 +3,7 @@ import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/l10n/dates.dart';
 import 'package:amber_mobile_client/core/l10n/relative_time.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
+import 'package:amber_mobile_client/core/ui/amber_page.dart';
 import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
@@ -13,18 +14,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Opens a contact's profile as a dialog, as on the desktop. [contactsCubit]
-/// is passed in because the dialog sits outside the home screen's provider.
+/// Opens a contact's profile as a page, with the same layout as the desktop's
+/// dialog. [contactsCubit] is passed in because the page sits outside the home
+/// screen's provider.
 Future<void> showContactProfile(
   BuildContext context,
   String username,
   ContactsCubit contactsCubit,
 ) {
-  return showShadDialog<void>(
-    context: context,
-    builder: (_) => BlocProvider.value(
-      value: contactsCubit,
-      child: ContactProfileScreen(username: username),
+  return Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => BlocProvider.value(
+        value: contactsCubit,
+        child: ContactProfileScreen(username: username),
+      ),
     ),
   );
 }
@@ -107,7 +110,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     final errorKey = _errorKey;
 
     if (profile == null) {
-      return ShadDialog(
+      return AmberPage(
         child: SizedBox(
           height: 120,
           child: Center(
@@ -120,22 +123,15 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     }
 
     final user = profile.user;
-    return ShadDialog(
+    return AmberPage(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           ContactAvatar(user: user, size: 96),
           const SizedBox(height: 12),
-          Text(
-            user.displayName,
-            style: theme.textTheme.large,
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            '@${user.username}',
-            style: theme.textTheme.muted,
-            textAlign: TextAlign.center,
-          ),
+          Text(user.displayName, style: theme.textTheme.large),
+          Text('@${user.username}', style: theme.textTheme.muted),
           const SizedBox(height: 12),
           BioBox(bio: profile.bio),
           const SizedBox(height: 12),
@@ -146,7 +142,6 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ShadButton.outline(
                 key: const ValueKey('remove-contact'),

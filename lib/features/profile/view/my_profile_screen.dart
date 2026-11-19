@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/ui/amber_page.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
 import 'package:amber_mobile_client/features/auth/view/sign_out.dart';
@@ -9,13 +10,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Opens your own profile as a dialog, as on the desktop.
+/// Opens your own profile as a page with the same layout as the desktop's
+/// dialog.
 Future<void> showMyProfile(BuildContext context) {
-  return showShadDialog<void>(
-    context: context,
-    builder: (_) => BlocProvider.value(
-      value: context.read<AuthCubit>(),
-      child: const MyProfileScreen(),
+  final authCubit = context.read<AuthCubit>();
+  return Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) =>
+          BlocProvider.value(value: authCubit, child: const MyProfileScreen()),
     ),
   );
 }
@@ -32,7 +34,7 @@ class MyProfileScreen extends StatelessWidget {
     final account = context.select((AuthCubit cubit) => cubit.state.account);
 
     if (account == null) {
-      return const ShadDialog(
+      return const AmberPage(
         child: SizedBox(
           height: 120,
           child: Center(child: SizedBox(width: 120, child: ShadProgress())),
@@ -40,8 +42,9 @@ class MyProfileScreen extends StatelessWidget {
       );
     }
 
-    return ShadDialog(
+    return AmberPage(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           ContactAvatar(
@@ -50,16 +53,8 @@ class MyProfileScreen extends StatelessWidget {
             showPresence: false,
           ),
           const SizedBox(height: 12),
-          Text(
-            account.displayName,
-            style: theme.textTheme.large,
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            '@${account.username}',
-            style: theme.textTheme.muted,
-            textAlign: TextAlign.center,
-          ),
+          Text(account.displayName, style: theme.textTheme.large),
+          Text('@${account.username}', style: theme.textTheme.muted),
           const SizedBox(height: 12),
           BioBox(bio: account.bio),
           const SizedBox(height: 12),
