@@ -382,7 +382,7 @@
       "identifier": "Nome utente o email"
     },
     "requests": {
-      "title": "In arrivo",
+      "title": "Richieste",
       "description": "Accetta o rifiuta le richieste di amicizia che hai ricevuto.",
       "none": "Nessuna richiesta ricevuta al momento.",
       "accept": "Accetta",

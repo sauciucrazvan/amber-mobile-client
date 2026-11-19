@@ -1,4 +1,4 @@
-# Contacts: Home, list, inbox and add contact
+# Contacts: Home, list, requests and add contact
 
 Sources: `lib/features/home/home_screen.dart`, `lib/features/contacts/view/`
 
@@ -7,8 +7,8 @@ Sources: `lib/features/home/home_screen.dart`, `lib/features/contacts/view/`
 `AuthGate` shows `HomeScreen` once the user is signed in and verified. It creates the `ContactsCubit` from `AppServices` (API client and realtime events) and loads it.
 
 - Header: the current tab's title and your avatar (opens your profile). Sign-out lives in the profile.
-- Bottom bar, left to right: **Inbox** (the default is Chats), **Chats**, and **Settings**. Blocked accounts are in Settings.
-- Inbox has a selector at the top for **Requests** (with a badge for the pending count) and **Calls**.
+- Bottom bar, left to right: **Requests**, **Chats** (the default), and **Settings**. Blocked accounts are in Settings.
+- Requests has a selector at the top for **Requests** (with a badge for the pending count) and **Calls**.
 - Swiping left or right changes tab, in the bar's order.
 - The add-contact button floats in the bottom-right corner of the Chats tab, round and in the primary colour.
 - The tab bodies sit in an `IndexedStack`, so each list keeps its scroll position.

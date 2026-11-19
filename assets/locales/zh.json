@@ -382,7 +382,7 @@
       "identifier": "用户名或邮箱"
     },
     "requests": {
-      "title": "收件箱",
+      "title": "请求",
       "description": "接受或拒绝您收到的任何好友申请。",
       "none": "目前没有收到好友申请。",
       "accept": "接受",

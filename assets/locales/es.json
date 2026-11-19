@@ -382,7 +382,7 @@
       "identifier": "Nombre de usuario o correo"
     },
     "requests": {
-      "title": "Bandeja de entrada",
+      "title": "Solicitudes",
       "description": "Acepta o rechaza las solicitudes de amistad que has recibido.",
       "none": "No se han recibido solicitudes por el momento.",
       "accept": "Aceptar",

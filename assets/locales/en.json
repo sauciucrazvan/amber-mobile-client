@@ -384,7 +384,7 @@
       "identifier": "Username or email"
     },
     "requests": {
-      "title": "Inbox",
+      "title": "Requests",
       "description": "Accept or decline any friendship requests you've received.",
       "none": "No requests received at the moment.",
       "accept": "Accept",
