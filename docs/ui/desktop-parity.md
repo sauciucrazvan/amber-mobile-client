@@ -22,9 +22,10 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - Contact avatars show a green dot when online and a red dot when offline, as on the desktop.
 - Dialogs use `AmberDialog`: rounded corners (8px) on every screen size, and left-aligned title and text.
 - Dialogs sit 16px in from the screen edges, with 16px between their parts and 8px between buttons.
-- The chat composer's text field and send button share one border, as on the desktop's button group. The attachment button sits to their left.
+- The chat composer's send button sits inside the message field's border, as on the desktop's joined input. The attachment button sits to its left.
+- Loading bars are 2px tall.
 - Profiles open as full pages (`AmberPage`) with a back button, using the same layout as the desktop's profile dialog.
 - The Chats tab uses the `messageCircle` icon, as on the desktop.
 - The theme keeps the desktop's neutral palette, so buttons stay neutral. The logo's orange (`AppColors.brand`, `#FF9831`) is used only for the round add-contact button, with white text.
-- Profile pages are centred horizontally and start at the top, and sign-out is pinned to the bottom (`AmberPage.footer`).
+- Profile pages stack the avatar, name and username in a centred column. The bio and dates keep their boxes. Sign-out is pinned to the bottom (`AmberPage.footer`).
 - The Chats header has no logo.
