@@ -30,9 +30,24 @@ class AccountApi {
     {'setting': setting, 'value': value},
   );
 
-  Future<void> _patch(String path, Map<String, Object> data) async {
+  /// Asks for a copy of the account's data, sent by email. The server allows
+  /// one request a week.
+  Future<void> requestData() => _send('POST', '/account/v1/request/data');
+
+  /// Deletes the account. The server checks the password first.
+  Future<void> deleteAccount(String password) =>
+      _send('DELETE', '/account/v1/delete', {'password': password});
+
+  Future<void> _patch(String path, Map<String, Object> data) =>
+      _send('PATCH', path, data);
+
+  Future<void> _send(
+    String method,
+    String path, [
+    Map<String, Object>? data,
+  ]) async {
     try {
-      await _client.request<void>(path, method: 'PATCH', data: data);
+      await _client.request<void>(path, method: method, data: data);
     } on DioException catch (error) {
       throw ApiFailure.fromDio(error);
     }

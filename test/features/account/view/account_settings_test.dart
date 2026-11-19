@@ -1,3 +1,4 @@
+import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -94,4 +95,53 @@ void main() {
     expect(patch.path, endsWith('/account/v1/settings/privacy'));
     expect(patch.data, {'setting': 'allow_add_by_email', 'value': false});
   });
+
+  testWidgets('requesting the data sends the request', (tester) async {
+    final log = <RequestOptions>[];
+    await _openSettings(tester, log);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('account-data')));
+    await tester.tap(find.byKey(const ValueKey('account-data')));
+    await settleRequests(tester);
+
+    final request = log.lastWhere(
+      (r) => r.path.endsWith('/account/v1/request/data'),
+    );
+    expect(request.method, 'POST');
+  });
+
+  testWidgets(
+    'deleting the account needs the password and a second confirmation',
+    (tester) async {
+      final log = <RequestOptions>[];
+      final cubit = await pumpAuthApp(tester, _backend(log));
+      await tester.runAsync(() => cubit.login('ana', 'Secret123'));
+      await settleRequests(tester);
+      await tester.tap(find.byKey(const ValueKey('nav-settings')));
+      await settleRequests(tester);
+
+      await tester.ensureVisible(find.byKey(const ValueKey('account-delete')));
+      await tester.tap(find.byKey(const ValueKey('account-delete')));
+      await settleRequests(tester);
+      await tester.enterText(
+        find.byKey(const ValueKey('delete-password')),
+        'Secret123',
+      );
+      await tester.tap(find.byKey(const ValueKey('delete-continue')));
+      await settleRequests(tester);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(ShadDialog).last,
+          matching: find.text('Delete'),
+        ),
+      );
+      await settleRequests(tester);
+
+      final delete = log.lastWhere((r) => r.method == 'DELETE');
+      expect(delete.path, endsWith('/account/v1/delete'));
+      expect(delete.data, {'password': 'Secret123'});
+      expect(cubit.state.status, AuthStatus.unauthenticated);
+    },
+  );
 }
