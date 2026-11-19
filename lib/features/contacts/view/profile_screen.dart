@@ -115,7 +115,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
           height: 120,
           child: Center(
             child: errorKey == null
-                ? const SizedBox(width: 120, child: ShadProgress())
+                ? const SizedBox(width: 120, child: ShadProgress(minHeight: 2))
                 : Text(l10n.t(errorKey)),
           ),
         ),
@@ -125,7 +125,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
     final user = profile.user;
     return AmberPage(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           ContactAvatar(user: user, size: 96),
@@ -142,6 +142,7 @@ class _ContactProfileScreenState extends State<ContactProfileScreen> {
           ),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ShadButton.outline(
                 key: const ValueKey('remove-contact'),
