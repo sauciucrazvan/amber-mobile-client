@@ -2,6 +2,9 @@ import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/calls/bloc/call_history_cubit.dart';
+import 'package:amber_mobile_client/features/calls/data/call_history.dart';
+import 'package:amber_mobile_client/features/calls/view/call_history_tab.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.dart';
@@ -23,22 +26,31 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final services = context.read<AppServices>();
-        final myUserId = context.read<AuthCubit>().state.account?.id ?? -1;
-        return ContactsCubit(
-          api: ContactsApi(services.apiClient),
-          myUserId: myUserId,
-          events: services.realtimeEvents,
-        )..load();
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) {
+            final services = context.read<AppServices>();
+            final myUserId = context.read<AuthCubit>().state.account?.id ?? -1;
+            return ContactsCubit(
+              api: ContactsApi(services.apiClient),
+              myUserId: myUserId,
+              events: services.realtimeEvents,
+            )..load();
+          },
+        ),
+        BlocProvider(
+          create: (context) => CallHistoryCubit(
+            api: CallHistoryApi(context.read<AppServices>().apiClient),
+          )..load(),
+        ),
+      ],
       child: const _HomeView(),
     );
   }
 }
 
-enum _HomeTab { chats, inbox }
+enum _HomeTab { chats, inbox, calls }
 
 class _HomeView extends StatefulWidget {
   const _HomeView();
@@ -67,12 +79,11 @@ class _HomeViewState extends State<_HomeView> {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  _tab == _HomeTab.chats
-                      ? l10n.t('contacts.title')
-                      : l10n.t('contacts.requests.title'),
-                  style: theme.textTheme.h3,
-                ),
+                child: Text(switch (_tab) {
+                  _HomeTab.chats => l10n.t('contacts.title'),
+                  _HomeTab.inbox => l10n.t('contacts.requests.title'),
+                  _HomeTab.calls => l10n.t('calls.history.title'),
+                }, style: theme.textTheme.h3),
               ),
               ShadIconButton.ghost(
                 key: const ValueKey('blocked-accounts'),
@@ -101,6 +112,7 @@ class _HomeViewState extends State<_HomeView> {
                     ),
                   ),
                   const RequestsList(),
+                  const CallHistoryTab(),
                 ],
               ),
               // The add button floats over the contacts, bottom right, as on
@@ -167,6 +179,15 @@ class _BottomBar extends StatelessWidget {
                 label: l10n.t('contacts.title'),
                 selected: selected == _HomeTab.chats,
                 onPressed: () => onSelected(_HomeTab.chats),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                key: const ValueKey('nav-calls'),
+                icon: LucideIcons.phone,
+                label: l10n.t('calls.history.title'),
+                selected: selected == _HomeTab.calls,
+                onPressed: () => onSelected(_HomeTab.calls),
               ),
             ),
             Expanded(
