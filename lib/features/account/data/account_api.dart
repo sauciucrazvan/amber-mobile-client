@@ -66,6 +66,25 @@ class AccountApi {
     }
   }
 
+  /// Starts an email change. Returns the server's message: `confirm_sent`
+  /// when the current email needs a code first, or `verify_sent` when the code
+  /// goes straight to the new address.
+  Future<String> requestEmailChange({
+    required String email,
+    required String password,
+  }) => _postMessage('/account/v1/modify/email/request', {
+    'new_email': email,
+    'password': password,
+  });
+
+  /// Checks the code sent to the current email. Returns the server's message.
+  Future<String> confirmEmailChange(String code) =>
+      _postMessage('/account/v1/modify/email/confirm', {'code': code});
+
+  /// Checks the code sent to the new email, which completes the change.
+  Future<String> verifyEmailChange(String code) =>
+      _postMessage('/account/v1/modify/email/verify', {'code': code});
+
   /// Asks for a copy of the account's data, sent by email. The server allows
   /// one request a week.
   Future<void> requestData() => _send('POST', '/account/v1/request/data');
@@ -73,6 +92,19 @@ class AccountApi {
   /// Deletes the account. The server checks the password first.
   Future<void> deleteAccount(String password) =>
       _send('DELETE', '/account/v1/delete', {'password': password});
+
+  Future<String> _postMessage(String path, Map<String, Object> data) async {
+    try {
+      final response = await _client.request<Map<String, dynamic>>(
+        path,
+        method: 'POST',
+        data: data,
+      );
+      return response.data?['message'] as String? ?? '';
+    } on DioException catch (error) {
+      throw ApiFailure.fromDio(error);
+    }
+  }
 
   Future<void> _patch(String path, Map<String, Object> data) =>
       _send('PATCH', path, data);
