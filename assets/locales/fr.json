@@ -280,7 +280,11 @@
           "title": "Mettre en ligne un avatar",
           "description": "Êtes-vous sûr de vouloir utiliser cette image comme avatar ?",
           "upload": "Mettre en ligne"
-        }
+        },
+        "tooBig": "L'image dépasse 5 Mo.",
+        "invalidType": "Utilisez une image JPEG, PNG ou WebP.",
+        "missingFile": "Choisissez d'abord une image.",
+        "storageUnavailable": "Le stockage des avatars est indisponible pour le moment."
       },
       "privacy": {
         "allow_add_by_email": {

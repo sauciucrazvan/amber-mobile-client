@@ -2,6 +2,18 @@ import 'package:amber_mobile_client/core/network/api_client.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:dio/dio.dart';
 
+/// Avatar files the server accepts, by extension. The server takes the type
+/// from the upload, so these must match its allowed list.
+const avatarContentTypes = {
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'png': 'image/png',
+  'webp': 'image/webp',
+};
+
+/// The largest avatar the server accepts.
+const avatarMaxBytes = 5 * 1024 * 1024;
+
 /// The account changes that save in place: name, bio, password and privacy.
 /// Each method throws [ApiFailure] with a translation key on an error.
 class AccountApi {
@@ -29,6 +41,30 @@ class AccountApi {
     '/account/v1/settings/privacy',
     {'setting': setting, 'value': value},
   );
+
+  /// Uploads a new avatar and returns its address.
+  Future<String> uploadAvatar({
+    required List<int> bytes,
+    required String filename,
+    required String contentType,
+  }) async {
+    try {
+      final response = await _client.request<Map<String, dynamic>>(
+        '/account/v1/upload/avatar',
+        method: 'POST',
+        data: FormData.fromMap({
+          'file': MultipartFile.fromBytes(
+            bytes,
+            filename: filename,
+            contentType: DioMediaType.parse(contentType),
+          ),
+        }),
+      );
+      return response.data!['avatar_url'] as String;
+    } on DioException catch (error) {
+      throw ApiFailure.fromDio(error);
+    }
+  }
 
   /// Asks for a copy of the account's data, sent by email. The server allows
   /// one request a week.

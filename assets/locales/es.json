@@ -280,7 +280,11 @@
           "title": "Subir avatar",
           "description": "¿Seguro que quieres usar esta imagen como tu avatar?",
           "upload": "Subir"
-        }
+        },
+        "tooBig": "La imagen supera los 5 MB.",
+        "invalidType": "Usa una imagen JPEG, PNG o WebP.",
+        "missingFile": "Elige primero una imagen.",
+        "storageUnavailable": "El almacenamiento de avatares no está disponible ahora."
       },
       "privacy": {
         "allow_add_by_email": {
