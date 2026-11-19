@@ -398,7 +398,8 @@
       "success": "{{user}} a fost blocat cu succes."
     },
     "search_placeholder": "Caută contacte",
-    "no_results": "Niciun contact nu corespunde căutării."
+    "no_results": "Niciun contact nu corespunde căutării.",
+    "inbox": "Mesaje primite"
   },
   "account": {
     "verify": {

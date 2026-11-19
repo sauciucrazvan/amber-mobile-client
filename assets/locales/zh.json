@@ -398,7 +398,8 @@
       "success": "已成功拉黑 {{user}}。"
     },
     "search_placeholder": "搜索联系人",
-    "no_results": "没有符合搜索的联系人。"
+    "no_results": "没有符合搜索的联系人。",
+    "inbox": "收件箱"
   },
   "account": {
     "verify": {

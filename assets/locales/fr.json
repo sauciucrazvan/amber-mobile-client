@@ -398,7 +398,8 @@
       "success": "{{user}} a été bloqué avec succès."
     },
     "search_placeholder": "Rechercher des contacts",
-    "no_results": "Aucun contact ne correspond à votre recherche."
+    "no_results": "Aucun contact ne correspond à votre recherche.",
+    "inbox": "Boîte de réception"
   },
   "account": {
     "verify": {
