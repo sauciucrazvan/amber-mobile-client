@@ -32,6 +32,8 @@ Long-pressing a message opens a sheet (`showMessageActions`):
 
 Cancelling the banner clears the reply or edit target.
 
+**Swipe to reply:** drag a bubble sideways, either way, past 56px and let go. The reply banner opens for that message, the same as the Reply action. The bubble springs back to its place. A reply icon shows on the side being dragged (`SwipeToReply`).
+
 ## Not in this step
 
 - The sheet has the four quick reactions and the full emoji picker (see `docs/chat/reactions.md`).

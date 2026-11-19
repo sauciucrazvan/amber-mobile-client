@@ -8,6 +8,7 @@ import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_file_rules.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
+import 'package:amber_mobile_client/features/chat/view/swipe_to_reply.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_header.dart';
 import 'package:amber_mobile_client/features/chat/view/emoji_sheet.dart';
 import 'package:amber_mobile_client/features/chat/view/message_bubble.dart';
@@ -226,6 +227,14 @@ class _ConversationBodyState extends State<_ConversationBody> {
     }
   }
 
+  /// Replies to [message]. Used by the action sheet and by swiping a bubble.
+  void _startReply(ChatMessage message) {
+    setState(() {
+      _replyTo = message;
+      _editing = null;
+    });
+  }
+
   Future<void> _showActions(ChatMessage message) async {
     final cubit = context.read<ConversationCubit>();
     final action = await showMessageActions(
@@ -241,10 +250,7 @@ class _ConversationBodyState extends State<_ConversationBody> {
         final emoji = await showEmojiPicker(context);
         if (emoji != null) await _react(cubit, message, emoji);
       case MessageAction.reply:
-        setState(() {
-          _replyTo = message;
-          _editing = null;
-        });
+        _startReply(message);
       case MessageAction.edit:
         setState(() {
           _editing = message;
@@ -416,6 +422,7 @@ class _ConversationBodyState extends State<_ConversationBody> {
                   myUserId: widget.myUserId,
                   controller: _scroll,
                   onAction: _showActions,
+                  onReply: _startReply,
                   onReactionTap: _showReactions,
                   onQuoteTap: _jumpTo,
                   keyFor: _keyFor,
@@ -449,6 +456,7 @@ class _MessageList extends StatelessWidget {
     required this.myUserId,
     required this.controller,
     required this.onAction,
+    required this.onReply,
     required this.onReactionTap,
     required this.onQuoteTap,
     required this.keyFor,
@@ -459,6 +467,9 @@ class _MessageList extends StatelessWidget {
   final int myUserId;
   final ScrollController controller;
   final ValueChanged<ChatMessage> onAction;
+
+  /// Called when a bubble is swiped far enough to reply.
+  final ValueChanged<ChatMessage> onReply;
 
   /// Opens the reactions panel for a message, given the tapped emoji.
   final void Function(ChatMessage message) onReactionTap;
@@ -504,17 +515,20 @@ class _MessageList extends StatelessWidget {
         if (message.type == 'log') return LogSeparator(message: message);
         return KeyedSubtree(
           key: keyFor(message.id),
-          child: MessageBubble(
-            key: ValueKey(message.id),
-            message: message,
-            isMine: message.isMine(myUserId),
-            myUserId: myUserId,
-            nameOf: nameOf,
-            onLongPress: () => onAction(message),
-            onReactionTap: () => onReactionTap(message),
-            onQuoteTap: message.replyTo == null
-                ? null
-                : () => onQuoteTap(message.replyTo!.id),
+          child: SwipeToReply(
+            onReply: () => onReply(message),
+            child: MessageBubble(
+              key: ValueKey(message.id),
+              message: message,
+              isMine: message.isMine(myUserId),
+              myUserId: myUserId,
+              nameOf: nameOf,
+              onLongPress: () => onAction(message),
+              onReactionTap: () => onReactionTap(message),
+              onQuoteTap: message.replyTo == null
+                  ? null
+                  : () => onQuoteTap(message.replyTo!.id),
+            ),
           ),
         );
       },
