@@ -19,7 +19,8 @@
       "failed": "Connessione al server selezionato non riuscita."
     },
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "retry": "Riprova"
   },
   "login": {
     "signIn": "Accedi",
@@ -54,7 +55,8 @@
         "next": "Avanti",
         "finish": "Fine",
         "back": "Indietro"
-      }
+      },
+      "invalid_email": "Email non valida"
     }
   },
   "register": {
@@ -431,7 +433,9 @@
         "love": "Adoro",
         "smile": "Sorriso",
         "laugh": "Risata"
-      }
+      },
+      "hint": "Tocca un'emoji per aggiungere o rimuovere la tua reazione.",
+      "title": "Reazioni"
     },
     "deleted_message": "Messaggio eliminato con successo.",
     "deleteMessage": {
@@ -452,7 +456,12 @@
       "no_relation": "Non sei amico di questo utente o ti ha bloccato."
     },
     "files": {
-      "attachment": "Allegato"
+      "attachment": "Allegato",
+      "attach": "Allega un file",
+      "empty": "Questo file è vuoto.",
+      "too_big": "I file possono arrivare fino a 15 MB.",
+      "type_not_accepted": "Questo tipo di file non può essere inviato.",
+      "save_failed": "Impossibile salvare il file."
     }
   },
   "calls": {
@@ -470,7 +479,10 @@
       "rejected": "Rifiutata",
       "missed": "Persa",
       "failed": "Non riuscita",
-      "ended": "Terminata"
+      "ended": "Terminata",
+      "answeredElsewhere": "Risposta su un altro dispositivo",
+      "canceled": "Annullata",
+      "connecting": "Connessione in corso..."
     },
     "outgoing": {
       "waiting": "Squilla"

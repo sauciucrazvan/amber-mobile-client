@@ -115,7 +115,7 @@ void main() {
       await h.cubit.startCall(_bob, CallMode.video);
 
       expect(h.cubit.state.phase, CallPhase.idle);
-      expect(h.cubit.state.errorKey, 'calls.errors.permission');
+      expect(h.cubit.state.errorKey, 'calls.toasts.mediaAccessFailed');
       expect(h.sent, isEmpty);
     });
 
@@ -282,9 +282,23 @@ void main() {
       });
 
       expect(h.cubit.state.phase, CallPhase.idle);
-      expect(h.cubit.state.errorKey, 'calls.errors.failed');
+      expect(h.cubit.state.errorKey, 'calls.toasts.genericError');
       expect(h.media.calls.last, 'close');
     });
+  });
+
+  test('reset drops the call locally and sends nothing', () async {
+    final h = _Harness();
+    addTearDown(h.dispose);
+    await h.receive(_ringing());
+    await h.cubit.acceptCall();
+    final sentBefore = h.sent.length;
+
+    await h.cubit.reset();
+
+    expect(h.cubit.state.phase, CallPhase.idle);
+    expect(h.sent.length, sentBefore);
+    expect(h.media.calls.last, 'close');
   });
 
   test('a stray end for a call we are not in is ignored', () async {

@@ -21,6 +21,12 @@ abstract class CallMedia {
 
   void setCameraEnabled(bool enabled);
 
+  /// Switches between the front and back camera.
+  void switchCamera();
+
+  /// Routes the sound to the loudspeaker, or to the earpiece.
+  void setSpeakerOn(bool enabled);
+
   /// Stops the tracks and closes the peer connection.
   Future<void> close();
 }

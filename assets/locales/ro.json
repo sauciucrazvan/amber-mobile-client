@@ -19,7 +19,8 @@
       "failed": "Conexiunea la serverul selectat a eșuat."
     },
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "retry": "Reîncearcă"
   },
   "login": {
     "signIn": "Autentificare",
@@ -54,7 +55,8 @@
         "next": "Înainte",
         "finish": "Finalizează",
         "back": "Înapoi"
-      }
+      },
+      "invalid_email": "Adresă de e-mail invalidă"
     }
   },
   "register": {
@@ -431,7 +433,9 @@
         "love": "Ador",
         "smile": "Zâmbet",
         "laugh": "Râs"
-      }
+      },
+      "hint": "Atinge un emoji pentru a adăuga sau a elimina reacția ta.",
+      "title": "Reacții"
     },
     "deleted_message": "Mesajul a fost șters cu succes.",
     "deleteMessage": {
@@ -452,7 +456,12 @@
       "no_relation": "Nu sunteți prieten cu acest utilizator sau acesta v-a blocat."
     },
     "files": {
-      "attachment": "Atașament"
+      "attachment": "Atașament",
+      "attach": "Atașează un fișier",
+      "empty": "Acest fișier este gol.",
+      "too_big": "Fișierele pot avea până la 15 MB.",
+      "type_not_accepted": "Acest tip de fișier nu poate fi trimis.",
+      "save_failed": "Fișierul nu a putut fi salvat."
     }
   },
   "calls": {
@@ -470,7 +479,10 @@
       "rejected": "Respins",
       "missed": "Pierdut",
       "failed": "Eșuat",
-      "ended": "Terminat"
+      "ended": "Terminat",
+      "answeredElsewhere": "Răspuns pe alt dispozitiv",
+      "canceled": "Anulat",
+      "connecting": "Se conectează..."
     },
     "outgoing": {
       "waiting": "Sună"

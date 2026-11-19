@@ -93,6 +93,23 @@ class FlutterCallMedia implements CallMedia {
   }
 
   @override
+  void switchCamera() {
+    final track = localStream.value?.getVideoTracks().firstOrNull;
+    if (track != null) unawaited(Helper.switchCamera(track));
+  }
+
+  @override
+  void setSpeakerOn(bool enabled) {
+    unawaited(Helper.setSpeakerphoneOn(enabled));
+  }
+
+  /// Frees the streams. Call after [close].
+  void dispose() {
+    localStream.dispose();
+    remoteStream.dispose();
+  }
+
+  @override
   Future<void> close() async {
     final stream = localStream.value;
     localStream.value = null;

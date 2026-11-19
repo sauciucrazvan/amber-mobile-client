@@ -15,6 +15,11 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import '../../../support/fake_http_adapter.dart';
 import '../../../support/memory_key_value_storage.dart';
 
+import 'package:amber_mobile_client/features/calls/bloc/call_cubit.dart';
+import 'package:amber_mobile_client/features/calls/data/call_signaling.dart';
+
+import '../../calls/support/fake_call_media.dart';
+
 Future<void> _pumpHeader(WidgetTester tester, ContactUser contact) async {
   final localizations = (await tester.runAsync(
     () => AppLocalizations.load('en'),
@@ -30,6 +35,14 @@ Future<void> _pumpHeader(WidgetTester tester, ContactUser contact) async {
     ),
   );
   addTearDown(cubit.close);
+  final callCubit = CallCubit(
+    signaling: CallSignaling(
+      send: (_) => false,
+      incoming: const Stream.empty(),
+    ),
+    media: FakeCallMedia(),
+  );
+  addTearDown(callCubit.close);
   await tester.pumpWidget(
     AppLocalizationsScope(
       localizations: localizations,
@@ -38,7 +51,10 @@ Future<void> _pumpHeader(WidgetTester tester, ContactUser contact) async {
           home: Scaffold(
             body: BlocProvider.value(
               value: cubit,
-              child: ConversationHeader(contact: contact, onTap: () {}),
+              child: BlocProvider<CallCubit>.value(
+                value: callCubit,
+                child: ConversationHeader(contact: contact, onTap: () {}),
+              ),
             ),
           ),
         ),

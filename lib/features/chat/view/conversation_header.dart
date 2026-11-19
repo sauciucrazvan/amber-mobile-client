@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/l10n/relative_time.dart';
+import 'package:amber_mobile_client/features/calls/bloc/call_cubit.dart';
+import 'package:amber_mobile_client/features/calls/bloc/call_state.dart';
+import 'package:amber_mobile_client/features/calls/data/call_models.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
@@ -107,7 +110,76 @@ class _ConversationHeaderState extends State<ConversationHeader> {
               ],
             ),
           ),
+          _CallButton(
+            key: const ValueKey('call-audio'),
+            user: user,
+            mode: CallMode.audio,
+            icon: LucideIcons.phone,
+          ),
+          _CallButton(
+            key: const ValueKey('call-video'),
+            user: user,
+            mode: CallMode.video,
+            icon: LucideIcons.video,
+          ),
         ],
+      ),
+    );
+  }
+}
+
+/// Starts a call with [user]. Disabled while another call is going on, and a
+/// toast explains an offline contact, as on the desktop.
+class _CallButton extends StatelessWidget {
+  const _CallButton({
+    super.key,
+    required this.user,
+    required this.mode,
+    required this.icon,
+  });
+
+  final ContactUser user;
+  final CallMode mode;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final busy = context.select(
+      (CallCubit cubit) => cubit.state.phase != CallPhase.idle,
+    );
+    final label = l10n.t(
+      mode == CallMode.audio
+          ? 'calls.actions.startAudio'
+          : 'calls.actions.startVideo',
+    );
+
+    return Tooltip(
+      message: label,
+      child: ShadIconButton.ghost(
+        icon: Icon(icon, size: 18),
+        onPressed: busy
+            ? null
+            : () {
+                if (!user.online) {
+                  ShadToaster.of(context).show(
+                    ShadToast(
+                      description: Text(l10n.t('calls.toasts.contactOffline')),
+                    ),
+                  );
+                  return;
+                }
+                unawaited(
+                  context.read<CallCubit>().startCall(
+                    CallPeer(
+                      username: user.username,
+                      displayName: user.displayName,
+                      avatarUrl: user.avatarUrl,
+                    ),
+                    mode,
+                  ),
+                );
+              },
       ),
     );
   }

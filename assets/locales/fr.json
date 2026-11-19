@@ -19,7 +19,8 @@
       "failed": "La connexion au serveur sélectionné a échoué."
     },
     "online": "En ligne",
-    "offline": "Hors ligne"
+    "offline": "Hors ligne",
+    "retry": "Réessayer"
   },
   "login": {
     "signIn": "Se connecter",
@@ -54,7 +55,8 @@
         "next": "Suivant",
         "finish": "Terminer",
         "back": "Retour"
-      }
+      },
+      "invalid_email": "Adresse e-mail invalide"
     }
   },
   "register": {
@@ -431,7 +433,9 @@
         "love": "J'adore",
         "smile": "Sourire",
         "laugh": "Rire"
-      }
+      },
+      "hint": "Touchez un emoji pour ajouter ou retirer votre réaction.",
+      "title": "Réactions"
     },
     "deleted_message": "Message supprimé avec succès.",
     "deleteMessage": {
@@ -452,7 +456,12 @@
       "no_relation": "Vous n'êtes pas ami avec cet utilisateur ou il vous a bloqué."
     },
     "files": {
-      "attachment": "Pièce jointe"
+      "attachment": "Pièce jointe",
+      "attach": "Joindre un fichier",
+      "empty": "Ce fichier est vide.",
+      "too_big": "Les fichiers peuvent faire jusqu'à 15 Mo.",
+      "type_not_accepted": "Ce type de fichier ne peut pas être envoyé.",
+      "save_failed": "Le fichier n'a pas pu être enregistré."
     }
   },
   "calls": {
@@ -470,7 +479,10 @@
       "rejected": "Rejeté",
       "missed": "Manqué",
       "failed": "Échoué",
-      "ended": "Terminé"
+      "ended": "Terminé",
+      "answeredElsewhere": "Répondu sur un autre appareil",
+      "canceled": "Annulé",
+      "connecting": "Connexion..."
     },
     "outgoing": {
       "waiting": "Appel en cours..."

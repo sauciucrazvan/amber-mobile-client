@@ -6,6 +6,7 @@ import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/chat/bloc/conversation_cubit.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_api.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_file_rules.dart';
+import 'package:amber_mobile_client/features/chat/data/file_saver.dart';
 import 'package:amber_mobile_client/features/chat/data/chat_models.dart';
 import 'package:amber_mobile_client/features/chat/view/message_actions.dart';
 import 'package:amber_mobile_client/features/chat/view/swipe_to_reply.dart';
@@ -257,8 +258,32 @@ class _ConversationBodyState extends State<_ConversationBody> {
           _replyTo = null;
           _text.text = message.text ?? '';
         });
+      case MessageAction.saveAs:
+        await _saveFile(message);
       case MessageAction.delete:
         await _confirmDelete(cubit, message);
+    }
+  }
+
+  /// Saves a file message through the system dialog. A failed download shows a
+  /// toast. Cancelling the dialog does nothing.
+  Future<void> _saveFile(ChatMessage message) async {
+    final file = message.file;
+    if (file == null) return;
+    final l10n = AppLocalizations.of(context);
+    try {
+      await saveChatFile(
+        url: file.url,
+        filename: file.filename,
+        contentType: file.contentType,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ShadToaster.of(context).show(
+        ShadToast.destructive(
+          description: Text(l10n.t('conversations.files.save_failed')),
+        ),
+      );
     }
   }
 
