@@ -31,3 +31,15 @@ Problems, such as a refused microphone or the server refusing a call, show as a 
 ## Strings
 
 All text comes from the desktop's `calls` keys. Added for mobile: `calls.status.connecting`, `calls.status.canceled` and `calls.status.answeredElsewhere`.
+
+## Call history
+
+Sources: `lib/features/calls/view/call_history_tab.dart`, `lib/features/calls/bloc/call_history_cubit.dart`, `lib/features/calls/data/call_history.dart`
+
+The calls tab sits in the bottom bar, between Chats and Inbox. Each row shows the contact's avatar and name, why the call ended (or its status), when it was, and its length as `mm:ss`. Missed, failed, rejected and timed-out calls show in red, as on the desktop.
+
+- The list loads `GET /calls/v1/history` in pages of 50. Scrolling near the end loads the next page.
+- It refreshes every 30 seconds, and one second after a call ends, so the new entry appears without a restart.
+- Tapping a row opens the contact's chat.
+
+Direction (incoming, outgoing) is not shown. The backend's call summary has no caller field, and the desktop does not show it either. Adding it needs a `caller_user_id` in the summary.
