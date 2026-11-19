@@ -2,6 +2,7 @@ import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../../support/auth_test_app.dart';
 import '../../support/fake_http_adapter.dart';
@@ -116,7 +117,13 @@ void main() {
     await _signIn(tester, _backend());
 
     await _tap(tester, find.byKey(const ValueKey('add-contact')));
-    await tester.enterText(find.byType(EditableText), 'bob');
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(ShadDialog),
+        matching: find.byType(EditableText),
+      ),
+      'bob',
+    );
     await _tap(tester, find.text('Add'));
 
     expect(
@@ -137,7 +144,13 @@ void main() {
     );
 
     await _tap(tester, find.byKey(const ValueKey('add-contact')));
-    await tester.enterText(find.byType(EditableText), 'ghost');
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(ShadDialog),
+        matching: find.byType(EditableText),
+      ),
+      'ghost',
+    );
     await _tap(tester, find.text('Add'));
 
     expect(find.text("Couldn't find a user for ghost."), findsOneWidget);
