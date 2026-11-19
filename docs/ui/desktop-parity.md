@@ -24,6 +24,7 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - Dialogs sit 16px in from the screen edges, with 16px between their parts and 8px between buttons.
 - The chat composer has the attachment button on the left, the message field, and an outline send button on the right, as on the desktop.
 - Loading bars are 2px tall.
+- Avatar initials scale with the avatar (36% of its size), so small and large avatars match.
 - Profiles open as full pages (`AmberPage`) with a back button, using the same layout as the desktop's profile dialog.
 - The Chats tab uses the `messageCircle` icon, as on the desktop.
 - The theme keeps the desktop's neutral palette, so buttons stay neutral. The logo's orange (`AppColors.brand`, `#FF9831`) is used only for the round add-contact button, with white text.
