@@ -2,6 +2,9 @@ import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
+import 'package:amber_mobile_client/features/calls/bloc/call_history_cubit.dart';
+import 'package:amber_mobile_client/features/calls/data/call_history.dart';
+import 'package:amber_mobile_client/features/calls/view/call_history_tab.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/add_contact_dialog.dart';
@@ -23,23 +26,32 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final services = context.read<AppServices>();
-        final myUserId = context.read<AuthCubit>().state.account?.id ?? -1;
-        return ContactsCubit(
-          api: ContactsApi(services.apiClient),
-          myUserId: myUserId,
-          events: services.realtimeEvents,
-        )..load();
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) {
+            final services = context.read<AppServices>();
+            final myUserId = context.read<AuthCubit>().state.account?.id ?? -1;
+            return ContactsCubit(
+              api: ContactsApi(services.apiClient),
+              myUserId: myUserId,
+              events: services.realtimeEvents,
+            )..load();
+          },
+        ),
+        BlocProvider(
+          create: (context) => CallHistoryCubit(
+            api: CallHistoryApi(context.read<AppServices>().apiClient),
+          )..load(),
+        ),
+      ],
       child: const _HomeView(),
     );
   }
 }
 
 /// The bottom bar, left to right. Chats is the default.
-enum _HomeTab { inbox, chats, settings }
+enum _HomeTab { inbox, chats, calls, settings }
 
 class _HomeView extends StatefulWidget {
   const _HomeView();
@@ -71,6 +83,7 @@ class _HomeViewState extends State<_HomeView> {
                 child: Text(switch (_tab) {
                   _HomeTab.inbox => l10n.t('contacts.requests.title'),
                   _HomeTab.chats => l10n.t('contacts.title'),
+                  _HomeTab.calls => l10n.t('calls.history.title'),
                   _HomeTab.settings => l10n.t('settings.title'),
                 }, style: theme.textTheme.h3),
               ),
@@ -92,6 +105,7 @@ class _HomeViewState extends State<_HomeView> {
                       context.read<ContactsCubit>(),
                     ),
                   ),
+                  const CallHistoryTab(),
                   const SettingsScreen(),
                 ],
               ),
@@ -169,6 +183,15 @@ class _BottomBar extends StatelessWidget {
                 label: l10n.t('contacts.title'),
                 selected: selected == _HomeTab.chats,
                 onPressed: () => onSelected(_HomeTab.chats),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                key: const ValueKey('nav-calls'),
+                icon: LucideIcons.phone,
+                label: l10n.t('calls.history.title'),
+                selected: selected == _HomeTab.calls,
+                onPressed: () => onSelected(_HomeTab.calls),
               ),
             ),
             Expanded(
