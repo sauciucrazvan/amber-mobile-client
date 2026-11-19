@@ -326,8 +326,7 @@
         "downloaded": "Ready to install",
         "error": "Error"
       },
-      "version": "Version",
-      "project": "Project"
+      "version": "Version"
     },
     "devices": {
       "options": {

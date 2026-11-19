@@ -326,8 +326,7 @@
         "downloaded": "インストールの準備完了",
         "error": "エラー"
       },
-      "version": "バージョン",
-      "project": "プロジェクト"
+      "version": "バージョン"
     },
     "devices": {
       "options": {
