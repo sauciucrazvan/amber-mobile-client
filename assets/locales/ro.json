@@ -291,6 +291,12 @@
           "title": "Permiteți oamenilor să vă găsească",
           "subtitle": "Permiteți altora să vă adauge folosind adresa dumneavoastră de email."
         }
+      },
+      "sections": {
+        "security": "Securitate",
+        "privacy": "Confidențialitate",
+        "data": "Datele tale",
+        "danger": "Zonă periculoasă"
       }
     },
     "about": {

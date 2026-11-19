@@ -178,6 +178,7 @@ void main() {
     await _signIn(tester, _backend(log, blocked: [_danBlocked]));
 
     await _tap(tester, find.byKey(const ValueKey('nav-settings')));
+    await _tap(tester, find.byKey(const ValueKey('settings-account')));
     await _tap(tester, find.byKey(const ValueKey('open-blocked')));
     expect(find.text('@dan'), findsOneWidget);
 

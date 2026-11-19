@@ -291,6 +291,12 @@
           "title": "Lassen Sie sich finden",
           "subtitle": "Erlauben Sie anderen, Sie über Ihre E-Mail-Adresse hinzuzufügen."
         }
+      },
+      "sections": {
+        "security": "Sicherheit",
+        "privacy": "Datenschutz",
+        "data": "Deine Daten",
+        "danger": "Gefahrenbereich"
       }
     },
     "about": {

@@ -291,6 +291,12 @@
           "title": "Laisser les gens vous trouver",
           "subtitle": "Autoriser d'autres personnes à vous ajouter en utilisant votre adresse e-mail."
         }
+      },
+      "sections": {
+        "security": "Sécurité",
+        "privacy": "Confidentialité",
+        "data": "Vos données",
+        "danger": "Zone de danger"
       }
     },
     "about": {

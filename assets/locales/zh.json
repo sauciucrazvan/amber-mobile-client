@@ -291,6 +291,12 @@
           "title": "让他人找到您",
           "subtitle": "允许其他人通过您的电子邮箱地址添加您。"
         }
+      },
+      "sections": {
+        "security": "安全",
+        "privacy": "隐私",
+        "data": "你的数据",
+        "danger": "危险操作"
       }
     },
     "about": {

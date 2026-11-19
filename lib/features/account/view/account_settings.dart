@@ -4,6 +4,12 @@ import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/account/data/account_api.dart';
 import 'package:amber_mobile_client/features/account/view/email_change_dialog.dart';
+import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
+import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
+import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
+import 'package:amber_mobile_client/features/settings/view/settings_layout.dart';
+import 'package:amber_mobile_client/core/ui/amber_page.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
@@ -14,8 +20,10 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 /// The account rows in Settings: name, bio, password and privacy. Each change
 /// saves on the server, refreshes the account, and shows a toast.
-class AccountSettings extends StatelessWidget {
-  const AccountSettings({super.key});
+/// The account page: the avatar at the top (tap it to change), then the
+/// settings grouped by topic. Blocked accounts are listed here too.
+class AccountPage extends StatelessWidget {
+  const AccountPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,63 +31,132 @@ class AccountSettings extends StatelessWidget {
     final account = context.select((AuthCubit cubit) => cubit.state.account);
     if (account == null) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _AccountRow(
-          title: l10n.t('settings.account.name.title'),
-          description: l10n.t('settings.account.name.description'),
-          buttonKey: const ValueKey('account-name'),
-          buttonLabel: l10n.t('settings.account.name.action'),
-          onPressed: () => _editName(context, account),
+    return AmberPage(
+      title: l10n.t('settings.tabs.account'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: GestureDetector(
+              key: const ValueKey('account-avatar'),
+              onTap: () => _changeAvatar(context),
+              child: ContactAvatar(
+                user: ContactUser(
+                  id: account.id,
+                  username: account.username,
+                  fullName: account.fullName,
+                  avatarUrl: account.avatarUrl,
+                ),
+                size: 96,
+                showPresence: false,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              l10n.t('settings.account.avatar.confirm.title'),
+              style: ShadTheme.of(context).textTheme.muted,
+            ),
+          ),
+          const SizedBox(height: 20),
+          SettingsSection(
+            title: l10n.t('settings.account.details.title'),
+            children: [
+              _AccountRow(
+                title: l10n.t('settings.account.name.title'),
+                description: l10n.t('settings.account.name.description'),
+                buttonKey: const ValueKey('account-name'),
+                buttonLabel: l10n.t('settings.account.name.action'),
+                onPressed: () => _editName(context, account),
+              ),
+              _AccountRow(
+                title: l10n.t('profile.bio.title'),
+                description: account.bio?.trim().isEmpty ?? true
+                    ? l10n.t('profile.bio.empty')
+                    : account.bio!.trim(),
+                buttonKey: const ValueKey('account-bio'),
+                buttonLabel: l10n.t('settings.account.name.action'),
+                onPressed: () => _editBio(context, account),
+              ),
+              _AccountRow(
+                title: l10n.t('settings.account.email.title'),
+                description: l10n.t('settings.account.email.description'),
+                buttonKey: const ValueKey('account-email'),
+                buttonLabel: l10n.t('settings.account.name.action'),
+                onPressed: () => _changeEmail(context),
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: l10n.t('settings.account.sections.security'),
+            children: [
+              _AccountRow(
+                title: l10n.t('settings.account.password.title'),
+                description: l10n.t('settings.account.password.description'),
+                buttonKey: const ValueKey('account-password'),
+                buttonLabel: l10n.t('settings.account.password.action'),
+                onPressed: () => _changePassword(context),
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: l10n.t('settings.account.sections.privacy'),
+            children: [_PrivacyRow(account: account)],
+          ),
+          SettingsSection(
+            title: l10n.t('contacts.blocked.title'),
+            children: const [_BlockedRow()],
+          ),
+          SettingsSection(
+            title: l10n.t('settings.account.sections.data'),
+            children: [
+              _AccountRow(
+                title: l10n.t('settings.account.data.title'),
+                description: l10n.t('settings.account.data.description'),
+                buttonKey: const ValueKey('account-data'),
+                buttonLabel: l10n.t('settings.account.data.action'),
+                onPressed: () => _requestData(context),
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: l10n.t('settings.account.sections.danger'),
+            children: [
+              _AccountRow(
+                title: l10n.t('settings.account.delete.title'),
+                description: l10n.t('settings.account.delete.description'),
+                buttonKey: const ValueKey('account-delete'),
+                buttonLabel: l10n.t('settings.account.delete.action'),
+                onPressed: () => _deleteAccount(context),
+                destructive: true,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Blocked accounts, opened from the account page.
+class _BlockedRow extends StatelessWidget {
+  const _BlockedRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SettingsRow(
+      title: l10n.t('contacts.blocked.title'),
+      description: l10n.t('contacts.blocked.description'),
+      control: ShadButton.outline(
+        key: const ValueKey('open-blocked'),
+        size: ShadButtonSize.sm,
+        onPressed: () => Navigator.of(context).push(
+          AmberPageRoute<void>(builder: (_) => const BlockedAccountsScreen()),
         ),
-        _AccountRow(
-          title: l10n.t('profile.bio.title'),
-          description: account.bio?.trim().isEmpty ?? true
-              ? l10n.t('profile.bio.empty')
-              : account.bio!.trim(),
-          buttonKey: const ValueKey('account-bio'),
-          buttonLabel: l10n.t('settings.account.name.action'),
-          onPressed: () => _editBio(context, account),
-        ),
-        _AccountRow(
-          title: l10n.t('settings.account.password.title'),
-          description: l10n.t('settings.account.password.description'),
-          buttonKey: const ValueKey('account-password'),
-          buttonLabel: l10n.t('settings.account.password.action'),
-          onPressed: () => _changePassword(context),
-        ),
-        _PrivacyRow(account: account),
-        _AccountRow(
-          title: l10n.t('settings.account.avatar.confirm.title'),
-          description: l10n.t('settings.account.avatar.confirm.description'),
-          buttonKey: const ValueKey('account-avatar'),
-          buttonLabel: l10n.t('settings.account.avatar.confirm.upload'),
-          onPressed: () => _changeAvatar(context),
-        ),
-        _AccountRow(
-          title: l10n.t('settings.account.email.title'),
-          description: l10n.t('settings.account.email.description'),
-          buttonKey: const ValueKey('account-email'),
-          buttonLabel: l10n.t('settings.account.name.action'),
-          onPressed: () => _changeEmail(context),
-        ),
-        _AccountRow(
-          title: l10n.t('settings.account.data.title'),
-          description: l10n.t('settings.account.data.description'),
-          buttonKey: const ValueKey('account-data'),
-          buttonLabel: l10n.t('settings.account.data.action'),
-          onPressed: () => _requestData(context),
-        ),
-        _AccountRow(
-          title: l10n.t('settings.account.delete.title'),
-          description: l10n.t('settings.account.delete.description'),
-          buttonKey: const ValueKey('account-delete'),
-          buttonLabel: l10n.t('settings.account.delete.action'),
-          onPressed: () => _deleteAccount(context),
-          destructive: true,
-        ),
-      ],
+        child: Text(l10n.t('contacts.blocked.trigger')),
+      ),
     );
   }
 }

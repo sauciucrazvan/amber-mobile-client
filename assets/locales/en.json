@@ -291,6 +291,12 @@
           "title": "Let people find you",
           "subtitle": "Allow others to add you using your email address."
         }
+      },
+      "sections": {
+        "security": "Security",
+        "privacy": "Privacy",
+        "data": "Your data",
+        "danger": "Danger zone"
       }
     },
     "about": {
