@@ -34,5 +34,5 @@ Cancelling the banner clears the reply or edit target.
 
 ## Not in this step
 
-- File uploads, image preview and the full emoji picker are later steps. The sheet has the four quick reactions only.
+- The sheet has the four quick reactions and the full emoji picker (see `docs/chat/reactions.md`).
 - Dates use `YYYY-MM-DD` for now, because localized dates need `intl`.
