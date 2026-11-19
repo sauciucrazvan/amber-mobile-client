@@ -57,8 +57,8 @@ class _HomeViewState extends State<_HomeView> {
     final requestCount = context.select(
       (ContactsCubit cubit) => cubit.state.requests.length,
     );
-
     final services = context.read<AppServices>();
+
     return Column(
       children: [
         RealtimeStatusBar(states: services.realtimeStates),
@@ -70,7 +70,9 @@ class _HomeViewState extends State<_HomeView> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  l10n.t('contacts.title'),
+                  _tab == _HomeTab.chats
+                      ? l10n.t('contacts.title')
+                      : l10n.t('contacts.requests.title'),
                   style: theme.textTheme.h3,
                 ),
               ),
@@ -83,58 +85,147 @@ class _HomeViewState extends State<_HomeView> {
                   ),
                 ),
               ),
-              ShadIconButton.ghost(
-                key: const ValueKey('add-contact'),
-                icon: const Icon(LucideIcons.userPlus),
-                onPressed: () => showAddContactDialog(context),
-              ),
               _MyProfileButton(onPressed: () => showMyProfile(context)),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ShadTabs<_HomeTab>(
-            value: _tab,
-            onChanged: (tab) => setState(() => _tab = tab),
-            tabs: [
-              ShadTab(
-                value: _HomeTab.chats,
-                child: Text(l10n.t('contacts.title')),
+        Expanded(
+          child: Stack(
+            children: [
+              IndexedStack(
+                index: _tab.index,
+                children: [
+                  ContactsList(
+                    onOpen: (contact) => showConversation(
+                      context,
+                      contact.user,
+                      context.read<ContactsCubit>(),
+                    ),
+                  ),
+                  const RequestsList(),
+                ],
               ),
-              ShadTab(
-                value: _HomeTab.inbox,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.t('contacts.requests.title')),
-                    if (requestCount > 0) ...[
-                      const SizedBox(width: 6),
-                      ShadBadge(child: Text('$requestCount')),
-                    ],
-                  ],
+              // The add button floats over the contacts, bottom right, as on
+              // the desktop's sidebar.
+              if (_tab == _HomeTab.chats)
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: ShadIconButton(
+                    key: const ValueKey('add-contact'),
+                    width: 56,
+                    height: 56,
+                    iconSize: 24,
+                    icon: const Icon(LucideIcons.userPlus),
+                    onPressed: () => showAddContactDialog(context),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
-        Expanded(
-          child: IndexedStack(
-            index: _tab.index,
-            children: [
-              ContactsList(
-                onOpen: (contact) => showConversation(
-                  context,
-                  contact.user,
-                  context.read<ContactsCubit>(),
-                ),
-              ),
-              const RequestsList(),
-            ],
-          ),
+        _BottomBar(
+          selected: _tab,
+          requestCount: requestCount,
+          onSelected: (tab) => setState(() => _tab = tab),
         ),
       ],
     );
+  }
+}
+
+/// The bottom navigation bar. Each destination is a shadcn button, so the bar
+/// matches the rest of the app. Add destinations here as features arrive.
+class _BottomBar extends StatelessWidget {
+  const _BottomBar({
+    required this.selected,
+    required this.requestCount,
+    required this.onSelected,
+  });
+
+  final _HomeTab selected;
+  final int requestCount;
+  final ValueChanged<_HomeTab> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = ShadTheme.of(context);
+    return SafeArea(
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: theme.colorScheme.border)),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: _NavItem(
+                key: const ValueKey('nav-chats'),
+                icon: LucideIcons.messageSquare,
+                label: l10n.t('contacts.title'),
+                selected: selected == _HomeTab.chats,
+                onPressed: () => onSelected(_HomeTab.chats),
+              ),
+            ),
+            Expanded(
+              child: _NavItem(
+                key: const ValueKey('nav-inbox'),
+                icon: LucideIcons.inbox,
+                label: l10n.t('contacts.requests.title'),
+                selected: selected == _HomeTab.inbox,
+                badge: requestCount,
+                onPressed: () => onSelected(_HomeTab.inbox),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onPressed,
+    this.badge = 0,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onPressed;
+  final int badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(icon, size: 20),
+            if (badge > 0)
+              Positioned(
+                right: -10,
+                top: -6,
+                child: ShadBadge(child: Text('$badge')),
+              ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+    // Taller than the default button height, so the icon and label fit.
+    return selected
+        ? ShadButton.secondary(height: 56, onPressed: onPressed, child: content)
+        : ShadButton.ghost(height: 56, onPressed: onPressed, child: content);
   }
 }
 
