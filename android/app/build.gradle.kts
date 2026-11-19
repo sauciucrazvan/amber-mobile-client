@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "dev.razvansauciuc.amber_mobile_client"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler needs to compile against API 37 or later.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

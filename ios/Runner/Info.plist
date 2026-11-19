@@ -6,6 +6,10 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Amber uses the camera for video calls.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Amber uses the microphone for calls.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Amber</string>
 	<key>CFBundleExecutable</key>
