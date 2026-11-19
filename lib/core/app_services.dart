@@ -8,6 +8,7 @@ class AppServices {
     required this.apiClient,
     this.realtimeEvents = const Stream.empty(),
     this.realtimeStates = const Stream.empty(),
+    this.sendRealtime = _notSent,
   });
 
   final ApiClient apiClient;
@@ -17,4 +18,9 @@ class AppServices {
 
   /// Connection changes, for the connecting bar and the failure message.
   final Stream<RealtimeConnectionState> realtimeStates;
+
+  /// Sends a message over the WebSocket. False when it was not sent.
+  final bool Function(Map<String, Object?> message) sendRealtime;
+
+  static bool _notSent(Map<String, Object?> message) => false;
 }

@@ -61,6 +61,17 @@ class RealtimeClient {
   /// Every incoming event, for features that handle several event names.
   Stream<Map<String, dynamic>> get events => _events.stream;
 
+  /// Sends [message] as JSON on the open connection. Returns false when the
+  /// connection is not open, so the caller can tell the user.
+  bool send(Map<String, Object?> message) {
+    final channel = _channel;
+    if (channel == null || _state != RealtimeConnectionState.connected) {
+      return false;
+    }
+    channel.sink.add(jsonEncode(message));
+    return true;
+  }
+
   /// Events whose `event` field equals [name].
   Stream<Map<String, dynamic>> on(String name) =>
       _events.stream.where((event) => event['event'] == name);

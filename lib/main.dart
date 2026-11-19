@@ -42,6 +42,7 @@ Future<void> main() async {
     apiClient: apiClient,
     realtimeEvents: realtime.events,
     realtimeStates: realtime.states,
+    sendRealtime: realtime.send,
   );
 
   runApp(
