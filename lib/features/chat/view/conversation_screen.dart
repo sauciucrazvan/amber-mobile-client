@@ -564,6 +564,12 @@ class _Composer extends StatelessWidget {
           if (banner != null) ...[banner!, const SizedBox(height: 6)],
           Row(
             children: [
+              ShadIconButton.ghost(
+                key: const ValueKey('attach-file'),
+                icon: const Icon(LucideIcons.paperclip),
+                onPressed: sending ? null : onAttach,
+              ),
+              const SizedBox(width: 4),
               Expanded(
                 child: ShadInput(
                   controller: controller,
@@ -572,11 +578,6 @@ class _Composer extends StatelessWidget {
                   enabled: !sending,
                   onSubmitted: (_) => onSend(),
                 ),
-              ),
-              ShadIconButton.ghost(
-                key: const ValueKey('attach-file'),
-                icon: const Icon(LucideIcons.paperclip),
-                onPressed: sending ? null : onAttach,
               ),
               const SizedBox(width: 4),
               ShadIconButton(
