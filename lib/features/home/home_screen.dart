@@ -1,5 +1,6 @@
 import 'package:amber_mobile_client/core/app_services.dart';
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/theme/app_theme.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
@@ -114,8 +115,8 @@ class _HomeViewState extends State<_HomeView> {
                     height: 56,
                     iconSize: 24,
                     decoration: const ShadDecoration(shape: BoxShape.circle),
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.primaryForeground,
+                    backgroundColor: AppColors.brand,
+                    foregroundColor: const Color(0xFFFFFFFF),
                     icon: const Icon(LucideIcons.userRoundPlus),
                     onPressed: () => showAddContactDialog(context),
                   ),

@@ -23,6 +23,6 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - Dialogs use `AmberDialog`: rounded corners (8px) and left-aligned title and text.
 - Profiles open as full pages (`AmberPage`) with a back button, using the same layout as the desktop's profile dialog.
 - The Chats tab uses the `messageCircle` icon, as on the desktop.
-- The primary colour is the logo's orange (`#FF9831`) in both themes, with dark text on it. Surfaces keep the desktop's neutral palette.
+- The theme keeps the desktop's neutral palette, so buttons stay neutral. The logo's orange (`AppColors.brand`, `#FF9831`) is used only for the round add-contact button, with white text.
 - Profile pages are centred on the screen, and sign-out is pinned to the bottom (`AmberPage.footer`).
 - The Chats header has no logo.
