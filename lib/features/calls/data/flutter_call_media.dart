@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amber_mobile_client/features/calls/data/call_devices.dart';
 import 'package:amber_mobile_client/features/calls/data/call_media.dart';
 import 'package:amber_mobile_client/features/calls/data/call_models.dart';
 import 'package:flutter/foundation.dart';
@@ -29,6 +30,9 @@ class FlutterCallMedia implements CallMedia {
 
   RTCPeerConnection? _peer;
 
+  /// The camera and audio output for the next call. Set from the settings.
+  CallDevices devices = const CallDevices();
+
   @override
   Future<bool> prepare(CallMode mode) async {
     if (!(await Permission.microphone.request()).isGranted) return false;
@@ -39,9 +43,18 @@ class FlutterCallMedia implements CallMedia {
 
     final stream = await navigator.mediaDevices.getUserMedia({
       'audio': true,
-      'video': mode == CallMode.video ? {'facingMode': 'user'} : false,
+      'video': mode == CallMode.video
+          ? {
+              'facingMode': devices.camera == CameraChoice.back
+                  ? 'environment'
+                  : 'user',
+            }
+          : false,
     });
     localStream.value = stream;
+    unawaited(
+      Helper.setSpeakerphoneOn(devices.audioOutput == AudioOutput.speaker),
+    );
 
     final peer = await createPeerConnection(_iceConfiguration);
     peer.onTrack = (event) {

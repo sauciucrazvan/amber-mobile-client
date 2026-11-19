@@ -325,7 +325,21 @@
         "downloading": "Download in corso",
         "downloaded": "Pronto per l'installazione",
         "error": "Errore"
-      }
+      },
+      "version": "Versione",
+      "project": "Progetto"
+    },
+    "devices": {
+      "options": {
+        "front": "Frontale",
+        "back": "Posteriore",
+        "speaker": "Altoparlante",
+        "earpiece": "Auricolare"
+      },
+      "microphoneDefault": "Viene usato il microfono predefinito del telefono."
+    },
+    "legal": {
+      "title": "Note legali"
     }
   },
   "contacts": {
@@ -383,7 +397,9 @@
       "description": "Gestisci i contatti che hai bloccato.",
       "none": "Nessun contatto bloccato",
       "success": "{{user}} bloccato con successo."
-    }
+    },
+    "search_placeholder": "Cerca contatti",
+    "no_results": "Nessun contatto corrisponde alla ricerca."
   },
   "account": {
     "verify": {

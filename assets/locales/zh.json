@@ -325,7 +325,21 @@
         "downloading": "正在下载",
         "downloaded": "准备好安装",
         "error": "错误"
-      }
+      },
+      "version": "版本",
+      "project": "项目"
+    },
+    "devices": {
+      "options": {
+        "front": "前置",
+        "back": "后置",
+        "speaker": "扬声器",
+        "earpiece": "听筒"
+      },
+      "microphoneDefault": "使用手机的默认麦克风。"
+    },
+    "legal": {
+      "title": "法律信息"
     }
   },
   "contacts": {
@@ -383,7 +397,9 @@
       "description": "管理您拉黑的联系人。",
       "none": "暂无黑名单联系人",
       "success": "已成功拉黑 {{user}}。"
-    }
+    },
+    "search_placeholder": "搜索联系人",
+    "no_results": "没有符合搜索的联系人。"
   },
   "account": {
     "verify": {
