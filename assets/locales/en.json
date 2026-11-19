@@ -476,6 +476,9 @@
     },
     "status": {
       "rejected": "Rejected",
+      "connecting": "Connecting...",
+      "canceled": "Canceled",
+      "answeredElsewhere": "Answered on another device",
       "missed": "Missed",
       "failed": "Failed",
       "ended": "Ended"
