@@ -54,8 +54,8 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-/// A full-width row that opens a settings page. It looks like a button, with
-/// the icon, the name and a chevron.
+/// A card that opens a settings page: an icon tile, the category name, and a
+/// chevron, so each category reads as a destination.
 class _CategoryButton extends StatelessWidget {
   const _CategoryButton({
     super.key,
@@ -72,24 +72,47 @@ class _CategoryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ShadTheme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
             Navigator.of(context)
                 .push(AmberPageRoute<void>(builder: (_) => page)),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
+            color: theme.colorScheme.card,
             border: Border.all(color: theme.colorScheme.border),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
-              Icon(icon, size: 18),
-              const SizedBox(width: 12),
-              Expanded(child: Text(label, style: theme.textTheme.small)),
-              const Icon(LucideIcons.chevronRight, size: 18),
+              Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: theme.colorScheme.secondaryForeground,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.large.copyWith(fontSize: 16),
+                ),
+              ),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 18,
+                color: theme.colorScheme.mutedForeground,
+              ),
             ],
           ),
         ),

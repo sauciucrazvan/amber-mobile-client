@@ -7,6 +7,7 @@ import 'package:amber_mobile_client/features/account/view/email_change_dialog.da
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/blocked_accounts_screen.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
+import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
 import 'package:amber_mobile_client/features/settings/view/settings_layout.dart';
 import 'package:amber_mobile_client/core/ui/amber_page.dart';
 import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
@@ -52,13 +53,6 @@ class AccountPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          Center(
-            child: Text(
-              l10n.t('settings.account.avatar.confirm.title'),
-              style: ShadTheme.of(context).textTheme.muted,
-            ),
-          ),
           const SizedBox(height: 20),
           SettingsSection(
             title: l10n.t('settings.account.details.title'),
@@ -71,20 +65,23 @@ class AccountPage extends StatelessWidget {
                 onPressed: () => _editName(context, account),
               ),
               _AccountRow(
-                title: l10n.t('profile.bio.title'),
-                description: account.bio?.trim().isEmpty ?? true
-                    ? l10n.t('profile.bio.empty')
-                    : account.bio!.trim(),
-                buttonKey: const ValueKey('account-bio'),
-                buttonLabel: l10n.t('settings.account.name.action'),
-                onPressed: () => _editBio(context, account),
-              ),
-              _AccountRow(
                 title: l10n.t('settings.account.email.title'),
                 description: l10n.t('settings.account.email.description'),
                 buttonKey: const ValueKey('account-email'),
                 buttonLabel: l10n.t('settings.account.name.action'),
                 onPressed: () => _changeEmail(context),
+              ),
+              // The same bio box as on the profile, with a button to change it.
+              BioBox(bio: account.bio),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ShadButton.outline(
+                  key: const ValueKey('account-bio'),
+                  size: ShadButtonSize.sm,
+                  onPressed: () => _editBio(context, account),
+                  child: Text(l10n.t('settings.account.name.action')),
+                ),
               ),
             ],
           ),
@@ -102,15 +99,9 @@ class AccountPage extends StatelessWidget {
           ),
           SettingsSection(
             title: l10n.t('settings.account.sections.privacy'),
-            children: [_PrivacyRow(account: account)],
-          ),
-          SettingsSection(
-            title: l10n.t('contacts.blocked.title'),
-            children: const [_BlockedRow()],
-          ),
-          SettingsSection(
-            title: l10n.t('settings.account.sections.data'),
             children: [
+              _PrivacyRow(account: account),
+              const _BlockedRow(),
               _AccountRow(
                 title: l10n.t('settings.account.data.title'),
                 description: l10n.t('settings.account.data.description'),
@@ -192,7 +183,10 @@ class _AccountRow extends StatelessWidget {
                 Text(title, style: theme.textTheme.small),
                 Text(
                   description,
-                  style: theme.textTheme.muted,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.mutedForeground,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -245,7 +239,10 @@ class _PrivacyRow extends StatelessWidget {
                   l10n.t(
                     'settings.account.privacy.allow_add_by_email.subtitle',
                   ),
-                  style: theme.textTheme.muted,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.mutedForeground,
+                  ),
                 ),
               ],
             ),
