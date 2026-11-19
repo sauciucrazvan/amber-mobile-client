@@ -382,7 +382,7 @@
       "identifier": "Nom d'utilisateur ou e-mail"
     },
     "requests": {
-      "title": "Boîte de réception",
+      "title": "Demandes",
       "description": "Acceptez ou refusez les demandes d'ami que vous avez reçues.",
       "none": "Aucune demande reçue pour le moment.",
       "accept": "Accepter",

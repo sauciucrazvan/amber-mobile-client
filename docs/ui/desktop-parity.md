@@ -17,7 +17,7 @@ These fix the items marked "built, but differs from the desktop". Features the d
 
 ## Navigation and presence
 
-- The home screen has a bottom bar with Chats and Inbox, built from shadcn buttons since `shadcn_ui` has no bottom bar. Calls, call history and settings will be added here.
+- The home screen has a bottom bar with Requests, Chats and Settings, built from shadcn buttons since `shadcn_ui` has no bottom bar. Calls, call history and settings will be added here.
 - The add-contact button floats over the bottom-right of the contacts, as on the desktop sidebar.
 - Contact avatars show a green dot when online and a red dot when offline, as on the desktop.
 - Dialogs use `AmberDialog`: rounded corners (8px) on every screen size, and left-aligned title and text.

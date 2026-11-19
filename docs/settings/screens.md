@@ -2,7 +2,7 @@
 
 Sources: `lib/features/settings/`, `lib/features/calls/bloc/call_devices_cubit.dart`, `lib/core/theme/appearance_cubit.dart`
 
-Settings is the third tab in the bottom bar: Inbox, Chats (the default), Settings. It is one scrolling page with sections, as in plan 07.
+Settings is the third tab in the bottom bar: Requests, Chats (the default), Settings. It is one scrolling page with sections, as in plan 07.
 
 ## Appearance
 

@@ -382,7 +382,7 @@
       "identifier": "Nume de utilizator sau email"
     },
     "requests": {
-      "title": "Mesaje primite",
+      "title": "Solicitări",
       "description": "Acceptați sau respingeți cererile de prietenie pe care le-ați primit.",
       "none": "Nicio cerere primită momentan.",
       "accept": "Acceptă",

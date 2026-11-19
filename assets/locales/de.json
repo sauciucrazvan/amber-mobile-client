@@ -382,7 +382,7 @@
       "identifier": "Benutzername oder E-Mail"
     },
     "requests": {
-      "title": "Posteingang",
+      "title": "Anfragen",
       "description": "Nehmen Sie Freundschaftsanfragen an oder lehnen Sie diese ab.",
       "none": "Im Moment keine Anfragen vorhanden.",
       "accept": "Annehmen",

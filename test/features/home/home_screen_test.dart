@@ -103,7 +103,7 @@ void main() {
   testWidgets('accepting a request moves it into the contacts', (tester) async {
     await _signIn(tester, _backend(requests: [_danRequest]));
 
-    await _tap(tester, find.text('Inbox'));
+    await _tap(tester, find.byKey(const ValueKey('nav-inbox')));
     expect(find.text('@dan'), findsOneWidget);
 
     await _tap(tester, find.text('Accept'));
