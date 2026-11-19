@@ -8,19 +8,38 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// The contacts tab: one row per contact, most recent activity first.
-class ContactsList extends StatelessWidget {
+/// The contacts tab: a search box, then one row per contact, most recent
+/// activity first.
+class ContactsList extends StatefulWidget {
   const ContactsList({super.key, this.onOpen});
 
   /// Called when a contact row is tapped.
   final ValueChanged<Contact>? onOpen;
 
   @override
+  State<ContactsList> createState() => _ContactsListState();
+}
+
+class _ContactsListState extends State<ContactsList> {
+  String _query = '';
+
+  /// Matches the display name or the username, ignoring case. A leading `@`
+  /// in the query is ignored, so `@bob` finds `bob`.
+  bool _matches(Contact contact) {
+    final query = _query.trim().toLowerCase().replaceFirst(RegExp(r'^@'), '');
+    if (query.isEmpty) return true;
+    final user = contact.user;
+    return user.displayName.toLowerCase().contains(query) ||
+        user.username.toLowerCase().contains(query);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = context.watch<ContactsCubit>().state;
+    final contacts = state.contacts.where(_matches).toList();
 
-    return switch (state.status) {
+    final body = switch (state.status) {
       ContactsStatus.loading when state.contacts.isEmpty => const Center(
         child: SizedBox(width: 160, child: ShadProgress(minHeight: 2)),
       ),
@@ -43,22 +62,43 @@ class ContactsList extends StatelessWidget {
           style: ShadTheme.of(context).textTheme.muted,
         ),
       ),
+      _ when contacts.isEmpty => Center(
+        child: Text(
+          l10n.t('contacts.no_results'),
+          style: ShadTheme.of(context).textTheme.muted,
+        ),
+      ),
       // No pull-to-refresh: realtime events keep the list current.
       _ => ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: state.contacts.length,
+        itemCount: contacts.length,
         separatorBuilder: (_, _) => const ShadSeparator.horizontal(
           margin: EdgeInsets.symmetric(horizontal: 16),
         ),
         itemBuilder: (context, index) {
-          final contact = state.contacts[index];
+          final contact = contacts[index];
           return ContactTile(
             contact: contact,
-            onTap: onOpen == null ? null : () => onOpen!(contact),
+            onTap: widget.onOpen == null ? null : () => widget.onOpen!(contact),
           );
         },
       ),
     };
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: ShadInput(
+            key: const ValueKey('contacts-search'),
+            placeholder: Text(l10n.t('contacts.search_placeholder')),
+            leading: const Icon(LucideIcons.search, size: 16),
+            onChanged: (value) => setState(() => _query = value),
+          ),
+        ),
+        Expanded(child: body),
+      ],
+    );
   }
 }
 

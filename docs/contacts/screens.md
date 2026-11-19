@@ -38,3 +38,7 @@ An `AmberDialog` (a `ShadDialog` with rounded corners and left-aligned text) wit
 ## Not yet
 
 Tapping a contact does nothing yet. The profile screen comes in the next step, and the chat with feature 03.
+
+## Contacts search
+
+The Chats tab has a search box above the list (`contacts.search_placeholder`). It filters by display name or username, ignoring case. A leading `@` is ignored, so `@bob` finds `bob`. When nothing matches, the list shows `contacts.no_results`.

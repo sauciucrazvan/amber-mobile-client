@@ -331,6 +331,8 @@
   "contacts": {
     "title": "Chats",
     "none": "No contacts yet",
+    "search_placeholder": "Search contacts",
+    "no_results": "No contacts match your search.",
     "failed_loading": "Failed loading contacts",
     "profile": "Profile",
     "block": "Block",
