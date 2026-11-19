@@ -27,6 +27,7 @@ class AmberDialog extends StatelessWidget {
         description: description,
         actions: actions ?? const [],
         radius: BorderRadius.circular(8),
+        removeBorderRadiusWhenTiny: false,
         titleTextAlign: TextAlign.start,
         descriptionTextAlign: TextAlign.start,
         crossAxisAlignment: CrossAxisAlignment.start,
