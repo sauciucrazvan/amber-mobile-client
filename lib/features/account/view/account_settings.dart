@@ -1,6 +1,7 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
+import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/account/data/account_api.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
@@ -47,6 +48,21 @@ class AccountSettings extends StatelessWidget {
           onPressed: () => _changePassword(context),
         ),
         _PrivacyRow(account: account),
+        _AccountRow(
+          title: l10n.t('settings.account.data.title'),
+          description: l10n.t('settings.account.data.description'),
+          buttonKey: const ValueKey('account-data'),
+          buttonLabel: l10n.t('settings.account.data.action'),
+          onPressed: () => _requestData(context),
+        ),
+        _AccountRow(
+          title: l10n.t('settings.account.delete.title'),
+          description: l10n.t('settings.account.delete.description'),
+          buttonKey: const ValueKey('account-delete'),
+          buttonLabel: l10n.t('settings.account.delete.action'),
+          onPressed: () => _deleteAccount(context),
+          destructive: true,
+        ),
       ],
     );
   }
@@ -59,6 +75,7 @@ class _AccountRow extends StatelessWidget {
     required this.buttonKey,
     required this.buttonLabel,
     required this.onPressed,
+    this.destructive = false,
   });
 
   final String title;
@@ -66,6 +83,7 @@ class _AccountRow extends StatelessWidget {
   final Key buttonKey;
   final String buttonLabel;
   final VoidCallback onPressed;
+  final bool destructive;
 
   @override
   Widget build(BuildContext context) {
@@ -89,12 +107,20 @@ class _AccountRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          ShadButton.outline(
-            key: buttonKey,
-            size: ShadButtonSize.sm,
-            onPressed: onPressed,
-            child: Text(buttonLabel),
-          ),
+          if (destructive)
+            ShadButton.destructive(
+              key: buttonKey,
+              size: ShadButtonSize.sm,
+              onPressed: onPressed,
+              child: Text(buttonLabel),
+            )
+          else
+            ShadButton.outline(
+              key: buttonKey,
+              size: ShadButtonSize.sm,
+              onPressed: onPressed,
+              child: Text(buttonLabel),
+            ),
         ],
       ),
     );
@@ -196,6 +222,43 @@ Future<void> _editBio(BuildContext context, Account account) async {
     () => _api(context).updateBio(bio),
     successKey: 'settings.account.bio.updated',
   );
+}
+
+Future<void> _requestData(BuildContext context) => _run(
+  context,
+  () => _api(context).requestData(),
+  successKey: 'settings.account.data.toast',
+  refresh: false,
+);
+
+/// Deletes the account after the password and a second confirmation. The
+/// session is then cleared, so the app returns to sign-in.
+Future<void> _deleteAccount(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  final password = await showShadDialog<String>(
+    context: context,
+    builder: (_) => const _DeleteDialog(),
+  );
+  if (password == null || !context.mounted) return;
+  final confirmed = await showConfirmationDialog(
+    context,
+    title: l10n.t('settings.account.delete.title'),
+    description: l10n.t('settings.account.delete.description'),
+    confirmText: l10n.t('settings.account.delete.action'),
+    destructive: true,
+  );
+  if (!confirmed || !context.mounted) return;
+  final authCubit = context.read<AuthCubit>();
+  try {
+    await _api(context).deleteAccount(password);
+  } on ApiFailure catch (failure) {
+    if (!context.mounted) return;
+    _toast(context, failure.messageKey, error: true);
+    return;
+  }
+  if (!context.mounted) return;
+  _toast(context, 'settings.account.delete.toast');
+  await authCubit.signOut();
 }
 
 Future<void> _changePassword(BuildContext context) async {
@@ -412,6 +475,53 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _DeleteDialog extends StatefulWidget {
+  const _DeleteDialog();
+
+  @override
+  State<_DeleteDialog> createState() => _DeleteDialogState();
+}
+
+class _DeleteDialogState extends State<_DeleteDialog> {
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AmberDialog(
+      title: Text(l10n.t('settings.account.delete.title')),
+      description: Text(l10n.t('settings.account.delete.description')),
+      actions: [
+        ShadButton.outline(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.t('common.cancel')),
+        ),
+        ShadButton.destructive(
+          key: const ValueKey('delete-continue'),
+          onPressed: () {
+            if (_password.text.isNotEmpty) {
+              Navigator.of(context).pop(_password.text);
+            }
+          },
+          child: Text(l10n.t('settings.account.delete.action')),
+        ),
+      ],
+      child: ShadInput(
+        key: const ValueKey('delete-password'),
+        controller: _password,
+        obscureText: true,
+        placeholder: Text(l10n.t('settings.account.password.current_password')),
       ),
     );
   }
