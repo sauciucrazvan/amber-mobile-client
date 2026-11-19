@@ -30,4 +30,4 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - The theme keeps the desktop's neutral palette, so buttons stay neutral. The logo's orange (`AppColors.brand`, `#FF9831`) is used only for the round add-contact button, with white text.
 - Profile pages stack the avatar, name and username in a centred column. The bio and dates keep their boxes. Sign-out is pinned to the bottom (`AmberPage.footer`).
 - The Chats header has no logo.
-- Screens that open on top of the app slide in from the right while fading in (`AmberPageRoute`). Switching bottom tabs fades between them (`FadeStack`), and each tab keeps its scroll position.
+- Screens that open on top of the app slide in from the right while fading in (`AmberPageRoute`). Bottom tabs slide between each other, and a swipe left or right changes tab (`PageView`). Each tab keeps its scroll position (`PageKeepAlive`).

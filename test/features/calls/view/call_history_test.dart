@@ -65,7 +65,9 @@ Future<void> _openCalls(WidgetTester tester, FakeHttpHandler backend) async {
   final cubit = await pumpAuthApp(tester, backend);
   await tester.runAsync(() => cubit.login('ana', 'Secret123'));
   await settleRequests(tester);
-  await tester.tap(find.byKey(const ValueKey('nav-calls')));
+  await tester.tap(find.byKey(const ValueKey('nav-inbox')));
+  await settleRequests(tester);
+  await tester.tap(find.byKey(const ValueKey('inbox-calls')));
   await settleRequests(tester);
 }
 
