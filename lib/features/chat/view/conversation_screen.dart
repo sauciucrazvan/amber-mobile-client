@@ -77,7 +77,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         appBar: AppBar(title: Text(widget.contact.displayName)),
         body: Center(
           child: errorKey == null
-              ? const SizedBox(width: 160, child: ShadProgress())
+              ? const SizedBox(width: 160, child: ShadProgress(minHeight: 2))
               : Text(l10n.t(errorKey)),
         ),
       );
@@ -480,7 +480,9 @@ class _MessageList extends StatelessWidget {
       return Center(child: Text(l10n.t('conversations.error.failed_loading')));
     }
     if (state.status == ConversationStatus.loading && state.messages.isEmpty) {
-      return const Center(child: SizedBox(width: 160, child: ShadProgress()));
+      return const Center(
+        child: SizedBox(width: 160, child: ShadProgress(minHeight: 2)),
+      );
     }
 
     final items = _items(state.messages);
@@ -493,7 +495,7 @@ class _MessageList extends StatelessWidget {
         if (index == items.length) {
           return const Padding(
             padding: EdgeInsets.all(12),
-            child: Center(child: ShadProgress()),
+            child: Center(child: ShadProgress(minHeight: 2)),
           );
         }
         final item = items[index];
@@ -556,7 +558,6 @@ class _Composer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = ShadTheme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
       child: Column(
@@ -571,37 +572,21 @@ class _Composer extends StatelessWidget {
                 onPressed: sending ? null : onAttach,
               ),
               const SizedBox(width: 4),
-              // The field and the send button share one border, as on the
-              // desktop's button group.
               Expanded(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.input),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ShadInput(
-                          controller: controller,
-                          placeholder: Text(
-                            l10n.t('conversations.type_message'),
-                          ),
-                          textInputAction: TextInputAction.send,
-                          enabled: !sending,
-                          onSubmitted: (_) => onSend(),
-                          decoration: const ShadDecoration(
-                            border: ShadBorder.none,
-                            focusedBorder: ShadBorder.none,
-                          ),
-                        ),
-                      ),
-                      ShadIconButton.ghost(
-                        key: const ValueKey('send-message'),
-                        icon: const Icon(LucideIcons.send),
-                        onPressed: sending ? null : onSend,
-                      ),
-                    ],
+                child: ShadInput(
+                  controller: controller,
+                  placeholder: Text(l10n.t('conversations.type_message')),
+                  textInputAction: TextInputAction.send,
+                  enabled: !sending,
+                  onSubmitted: (_) => onSend(),
+                  // The send button sits inside the field's border, as on the
+                  // desktop's joined input.
+                  trailing: ShadIconButton.ghost(
+                    key: const ValueKey('send-message'),
+                    width: 32,
+                    height: 32,
+                    icon: const Icon(LucideIcons.send, size: 16),
+                    onPressed: sending ? null : onSend,
                   ),
                 ),
               ),

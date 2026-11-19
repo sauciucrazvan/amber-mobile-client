@@ -37,7 +37,9 @@ class MyProfileScreen extends StatelessWidget {
       return const AmberPage(
         child: SizedBox(
           height: 120,
-          child: Center(child: SizedBox(width: 120, child: ShadProgress())),
+          child: Center(
+            child: SizedBox(width: 120, child: ShadProgress(minHeight: 2)),
+          ),
         ),
       );
     }
@@ -53,7 +55,7 @@ class MyProfileScreen extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           ContactAvatar(

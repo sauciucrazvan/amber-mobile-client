@@ -22,7 +22,7 @@ class ContactsList extends StatelessWidget {
 
     return switch (state.status) {
       ContactsStatus.loading when state.contacts.isEmpty => const Center(
-        child: SizedBox(width: 160, child: ShadProgress()),
+        child: SizedBox(width: 160, child: ShadProgress(minHeight: 2)),
       ),
       ContactsStatus.failed => Center(
         child: Column(

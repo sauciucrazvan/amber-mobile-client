@@ -77,7 +77,7 @@ class _Loading extends StatelessWidget {
       children: [
         const AmberLogo(size: 64),
         const SizedBox(height: 32),
-        const SizedBox(width: 160, child: ShadProgress()),
+        const SizedBox(width: 160, child: ShadProgress(minHeight: 2)),
       ],
     );
   }
