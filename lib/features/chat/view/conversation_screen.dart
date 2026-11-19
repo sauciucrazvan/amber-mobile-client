@@ -579,16 +579,13 @@ class _Composer extends StatelessWidget {
                   textInputAction: TextInputAction.send,
                   enabled: !sending,
                   onSubmitted: (_) => onSend(),
-                  // The send button sits inside the field's border, as on the
-                  // desktop's joined input.
-                  trailing: ShadIconButton.ghost(
-                    key: const ValueKey('send-message'),
-                    width: 32,
-                    height: 32,
-                    icon: const Icon(LucideIcons.send, size: 16),
-                    onPressed: sending ? null : onSend,
-                  ),
                 ),
+              ),
+              const SizedBox(width: 4),
+              ShadIconButton.outline(
+                key: const ValueKey('send-message'),
+                icon: const Icon(LucideIcons.send, size: 16),
+                onPressed: sending ? null : onSend,
               ),
             ],
           ),
