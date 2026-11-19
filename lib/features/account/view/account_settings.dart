@@ -3,6 +3,7 @@ import 'package:amber_mobile_client/core/network/api_failure.dart';
 import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:amber_mobile_client/core/ui/confirmation_dialog.dart';
 import 'package:amber_mobile_client/features/account/data/account_api.dart';
+import 'package:amber_mobile_client/features/account/view/email_change_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:amber_mobile_client/features/auth/bloc/auth_cubit.dart';
 import 'package:amber_mobile_client/features/auth/data/account.dart';
@@ -55,6 +56,13 @@ class AccountSettings extends StatelessWidget {
           buttonKey: const ValueKey('account-avatar'),
           buttonLabel: l10n.t('settings.account.avatar.confirm.upload'),
           onPressed: () => _changeAvatar(context),
+        ),
+        _AccountRow(
+          title: l10n.t('settings.account.email.title'),
+          description: l10n.t('settings.account.email.description'),
+          buttonKey: const ValueKey('account-email'),
+          buttonLabel: l10n.t('settings.account.name.action'),
+          onPressed: () => _changeEmail(context),
         ),
         _AccountRow(
           title: l10n.t('settings.account.data.title'),
@@ -230,6 +238,18 @@ Future<void> _editBio(BuildContext context, Account account) async {
     () => _api(context).updateBio(bio),
     successKey: 'settings.account.bio.updated',
   );
+}
+
+/// Changes the email through the three-step dialog, then refreshes the account.
+Future<void> _changeEmail(BuildContext context) async {
+  final changed = await showShadDialog<bool>(
+    context: context,
+    builder: (_) => EmailChangeDialog(api: _api(context)),
+  );
+  if (changed != true || !context.mounted) return;
+  await context.read<AuthCubit>().refreshAccount();
+  if (!context.mounted) return;
+  _toast(context, 'settings.account.email.updated');
 }
 
 /// Picks an image, checks its type and size, confirms, then uploads it.
