@@ -116,7 +116,10 @@ class _HomeViewState extends State<_HomeView> {
                     width: 56,
                     height: 56,
                     iconSize: 24,
-                    icon: const Icon(LucideIcons.userPlus),
+                    decoration: const ShadDecoration(shape: BoxShape.circle),
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.primaryForeground,
+                    icon: const Icon(LucideIcons.userRoundPlus),
                     onPressed: () => showAddContactDialog(context),
                   ),
                 ),
@@ -162,7 +165,7 @@ class _BottomBar extends StatelessWidget {
             Expanded(
               child: _NavItem(
                 key: const ValueKey('nav-chats'),
-                icon: LucideIcons.messageSquare,
+                icon: LucideIcons.messageCircle,
                 label: l10n.t('contacts.title'),
                 selected: selected == _HomeTab.chats,
                 onPressed: () => onSelected(_HomeTab.chats),

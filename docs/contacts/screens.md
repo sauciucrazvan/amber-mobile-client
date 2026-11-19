@@ -6,8 +6,9 @@ Sources: `lib/features/home/home_screen.dart`, `lib/features/contacts/view/`
 
 `AuthGate` shows `HomeScreen` once the user is signed in and verified. It creates the `ContactsCubit` from `AppServices` (API client and realtime events) and loads it.
 
-- Header: title (`contacts.title`), an add-contact button, and a sign-out button. Sign-out moves to Settings with feature 07.
-- Tabs (`ShadTabs`): **Chats** (contacts) and **Inbox** (requests). The Inbox tab shows a badge with the number of pending requests.
+- Header: the current tab's title, a blocked-accounts button, and your avatar (opens your profile). Sign-out lives in the profile.
+- Bottom bar: **Chats** (contacts) and **Inbox** (requests), built from shadcn buttons. The Inbox button shows a badge with the number of pending requests.
+- The add-contact button floats in the bottom-right corner of the Chats tab, round and in the primary colour.
 - The tab bodies sit in an `IndexedStack`, so each list keeps its scroll position.
 
 ## Contacts list
@@ -26,7 +27,7 @@ Each request shows the avatar, name and `@username`, with Decline and Accept but
 
 ## Add contact
 
-A `ShadDialog` with one field (`contacts.add.identifier`, username or email). Success closes the dialog and toasts `contacts.requested`. Errors such as `contacts.invalid_user`, `contacts.already_added` or `contacts.blocked.unreachable` stay in the dialog.
+An `AmberDialog` (a `ShadDialog` with rounded corners and left-aligned text) with one field (`contacts.add.identifier`, username or email). Success closes the dialog and toasts `contacts.requested`. Errors such as `contacts.invalid_user`, `contacts.already_added` or `contacts.blocked.unreachable` stay in the dialog.
 
 ## App changes
 
