@@ -17,6 +17,7 @@ import 'package:amber_mobile_client/features/chat/view/reactions_panel.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,7 +31,7 @@ Future<void> showConversation(
   ContactsCubit contactsCubit,
 ) {
   return Navigator.of(context).push(
-    MaterialPageRoute<void>(
+    AmberPageRoute<void>(
       builder: (_) => BlocProvider.value(
         value: contactsCubit,
         child: ConversationScreen(contact: contact),

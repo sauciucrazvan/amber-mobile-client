@@ -10,6 +10,7 @@ import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/data/contacts_api.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_feedback.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -23,7 +24,7 @@ Future<void> showContactProfile(
   ContactsCubit contactsCubit,
 ) {
   return Navigator.of(context).push(
-    MaterialPageRoute<void>(
+    AmberPageRoute<void>(
       builder: (_) => BlocProvider.value(
         value: contactsCubit,
         child: ContactProfileScreen(username: username),

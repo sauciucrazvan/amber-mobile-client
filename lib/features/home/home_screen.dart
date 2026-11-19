@@ -16,6 +16,7 @@ import 'package:amber_mobile_client/features/contacts/view/contacts_list.dart';
 import 'package:amber_mobile_client/features/chat/view/conversation_screen.dart';
 import 'package:amber_mobile_client/features/home/realtime_status_bar.dart';
 import 'package:amber_mobile_client/features/contacts/view/requests_list.dart';
+import 'package:amber_mobile_client/core/ui/fade_stack.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -94,7 +95,7 @@ class _HomeViewState extends State<_HomeView> {
         Expanded(
           child: Stack(
             children: [
-              IndexedStack(
+              FadeStack(
                 index: _tab.index,
                 children: [
                   const RequestsList(),

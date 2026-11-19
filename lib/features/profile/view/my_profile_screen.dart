@@ -6,6 +6,7 @@ import 'package:amber_mobile_client/features/auth/view/sign_out.dart';
 import 'package:amber_mobile_client/features/contacts/data/contact_models.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_avatar.dart';
 import 'package:amber_mobile_client/features/contacts/view/profile_screen.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -15,7 +16,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 Future<void> showMyProfile(BuildContext context) {
   final authCubit = context.read<AuthCubit>();
   return Navigator.of(context).push(
-    MaterialPageRoute<void>(
+    AmberPageRoute<void>(
       builder: (_) =>
           BlocProvider.value(value: authCubit, child: const MyProfileScreen()),
     ),

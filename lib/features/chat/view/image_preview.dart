@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/ui/open_url.dart';
+import 'package:amber_mobile_client/core/ui/amber_page_route.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -9,8 +10,7 @@ Future<void> showImagePreview(
   required String filename,
 }) {
   return Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      fullscreenDialog: true,
+    AmberPageRoute<void>(
       builder: (_) => ImagePreviewScreen(url: url, filename: filename),
     ),
   );
