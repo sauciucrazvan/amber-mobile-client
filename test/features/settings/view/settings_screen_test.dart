@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/theme/appearance_cubit.dart';
+import 'package:amber_mobile_client/features/settings/view/settings_pages.dart';
 import 'package:amber_mobile_client/features/settings/view/settings_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,9 +65,13 @@ void main() {
     await settleRequests(tester);
 
     expect(find.byType(SettingsScreen), findsOneWidget);
-    expect(find.text('Appearance'), findsWidgets);
-    expect(find.text('Devices'), findsWidgets);
-    expect(find.text('About'), findsWidgets);
+    expect(find.byKey(const ValueKey('settings-general')), findsOneWidget);
+    expect(find.byKey(const ValueKey('settings-account')), findsOneWidget);
+    expect(find.byKey(const ValueKey('settings-devices')), findsOneWidget);
+    expect(find.byKey(const ValueKey('settings-about')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('settings-about')));
+    await settleRequests(tester);
     expect(find.text('Legal'), findsOneWidget);
     expect(find.text('1.0.0 (1)'), findsOneWidget);
   });
@@ -79,9 +84,11 @@ void main() {
     await settleRequests(tester);
     await tester.tap(find.byKey(const ValueKey('nav-settings')));
     await settleRequests(tester);
+    await tester.tap(find.byKey(const ValueKey('settings-general')));
+    await settleRequests(tester);
 
     final appearance = tester
-        .element(find.byType(SettingsScreen))
+        .element(find.byType(GeneralPage))
         .read<AppearanceCubit>();
     expect(appearance.state.themeMode, ThemeMode.dark);
 

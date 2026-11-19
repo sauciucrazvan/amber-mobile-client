@@ -68,6 +68,8 @@ Future<void> _openEmailDialog(
   await settleRequests(tester);
   await tester.tap(find.byKey(const ValueKey('nav-settings')));
   await settleRequests(tester);
+  await tester.tap(find.byKey(const ValueKey('settings-account')));
+  await settleRequests(tester);
   await tester.ensureVisible(find.byKey(const ValueKey('account-email')));
   await tester.tap(find.byKey(const ValueKey('account-email')));
   await settleRequests(tester);

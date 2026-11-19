@@ -291,6 +291,12 @@
           "title": "Fatti trovare dalle persone",
           "subtitle": "Consenti agli altri di aggiungerti usando il tuo indirizzo email."
         }
+      },
+      "sections": {
+        "security": "Sicurezza",
+        "privacy": "Privacy",
+        "data": "I tuoi dati",
+        "danger": "Zona pericolosa"
       }
     },
     "about": {

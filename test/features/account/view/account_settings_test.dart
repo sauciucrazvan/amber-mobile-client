@@ -51,6 +51,8 @@ Future<void> _openSettings(
   await settleRequests(tester);
   await tester.tap(find.byKey(const ValueKey('nav-settings')));
   await settleRequests(tester);
+  await tester.tap(find.byKey(const ValueKey('settings-account')));
+  await settleRequests(tester);
 }
 
 void main() {
@@ -118,6 +120,8 @@ void main() {
       await tester.runAsync(() => cubit.login('ana', 'Secret123'));
       await settleRequests(tester);
       await tester.tap(find.byKey(const ValueKey('nav-settings')));
+      await settleRequests(tester);
+      await tester.tap(find.byKey(const ValueKey('settings-account')));
       await settleRequests(tester);
 
       await tester.ensureVisible(find.byKey(const ValueKey('account-delete')));

@@ -291,6 +291,12 @@
           "title": "Permitir que te encuentren",
           "subtitle": "Permite que otros te añadan utilizando tu dirección de correo electrónico."
         }
+      },
+      "sections": {
+        "security": "Seguridad",
+        "privacy": "Privacidad",
+        "data": "Tus datos",
+        "danger": "Zona de peligro"
       }
     },
     "about": {
