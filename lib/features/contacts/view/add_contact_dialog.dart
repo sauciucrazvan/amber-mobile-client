@@ -1,5 +1,6 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
 import 'package:amber_mobile_client/core/network/api_failure.dart';
+import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:amber_mobile_client/features/contacts/bloc/contacts_cubit.dart';
 import 'package:amber_mobile_client/features/contacts/view/contact_feedback.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,7 +67,7 @@ class _AddContactDialogState extends State<_AddContactDialog> {
     final l10n = AppLocalizations.of(context);
     final errorText = _errorText;
 
-    return ShadDialog(
+    return AmberDialog(
       title: Text(l10n.t('contacts.add.title')),
       description: Text(l10n.t('contacts.add.description')),
       actions: [

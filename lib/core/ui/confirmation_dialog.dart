@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -17,7 +18,7 @@ Future<bool> showConfirmationDialog(
   final l10n = AppLocalizations.of(context);
   final confirmed = await showShadDialog<bool>(
     context: context,
-    builder: (dialogContext) => ShadDialog.alert(
+    builder: (dialogContext) => AmberDialog(
       title: Text(title),
       description: Text(description),
       actions: [

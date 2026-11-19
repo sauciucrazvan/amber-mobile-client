@@ -1,4 +1,5 @@
 import 'package:amber_mobile_client/core/l10n/app_localizations.dart';
+import 'package:amber_mobile_client/core/ui/amber_dialog.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -11,7 +12,7 @@ Future<void> showLegalDialog(BuildContext context, LegalDocument document) {
 
   return showShadDialog<void>(
     context: context,
-    builder: (context) => ShadDialog(
+    builder: (context) => AmberDialog(
       title: Text(l10n.t('$key.title')),
       description: Text(l10n.t('$key.description')),
       child: ConstrainedBox(
