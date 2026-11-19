@@ -67,7 +67,9 @@ class _BlockedAccountsScreenState extends State<BlockedAccountsScreen> {
         child: errorKey != null
             ? Center(child: Text(l10n.t(errorKey)))
             : blocked == null
-            ? const Center(child: SizedBox(width: 160, child: ShadProgress()))
+            ? const Center(
+                child: SizedBox(width: 160, child: ShadProgress(minHeight: 2)),
+              )
             : blocked.isEmpty
             ? Center(
                 child: Padding(
