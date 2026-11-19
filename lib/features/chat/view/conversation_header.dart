@@ -157,7 +157,9 @@ class _CallButton extends StatelessWidget {
     return Tooltip(
       message: label,
       child: ShadIconButton.ghost(
-        icon: Icon(icon, size: 18),
+        width: 44,
+        height: 44,
+        icon: Icon(icon, size: 24),
         onPressed: busy
             ? null
             : () {
