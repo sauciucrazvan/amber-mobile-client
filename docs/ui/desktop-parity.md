@@ -14,3 +14,9 @@ These fix the items marked "built, but differs from the desktop". Features the d
 - Read state from other devices (backend gap).
 - Edit history, multiple files in one send, and the desktop's file save-as dialog.
 - Settings-based language choice.
+
+## Navigation and presence
+
+- The home screen has a bottom bar with Chats and Inbox, built from shadcn buttons since `shadcn_ui` has no bottom bar. Calls, call history and settings will be added here.
+- The add-contact button floats over the bottom-right of the contacts, as on the desktop sidebar.
+- Contact avatars show a green dot when online and a red dot when offline, as on the desktop.

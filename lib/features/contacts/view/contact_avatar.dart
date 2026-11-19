@@ -36,16 +36,19 @@ class ContactAvatar extends StatelessWidget {
             size: Size.square(size),
             placeholder: Text(_initials),
           ),
-          if (showPresence && user.online)
+          // Green when online, red when offline, as on the desktop.
+          if (showPresence)
             Positioned(
               right: 0,
               bottom: 0,
               child: Container(
-                key: const ValueKey('presence-online'),
+                key: ValueKey(
+                  user.online ? 'presence-online' : 'presence-offline',
+                ),
                 width: dotSize,
                 height: dotSize,
                 decoration: BoxDecoration(
-                  color: AppColors.online,
+                  color: user.online ? AppColors.online : AppColors.offline,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: theme.colorScheme.background,
